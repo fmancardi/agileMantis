@@ -25,13 +25,20 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-	html_page_top( plugin_lang_get( 'manage_product_backlogs_title' ) );
+	layout_page_header( plugin_lang_get( 'manage_product_backlogs_title' ) );
+	layout_page_begin();
 
 	if( current_user_is_administrator() || $_SESSION['AGILEMANTIS_ISMANTISADMIN'] == 1 ) {
 ?>
 <br>
 <?php include(AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php');?>	
 <?php
+	$kj = array('deleteProductBacklog','product_backlog_id');
+	foreach($kj as $yy)
+	{
+		$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+	}	
+
 	# delete product backlog by id
 	if( $_POST['deleteProductBacklog'] != "" ) {
 		$agilemantis_pb->id = (int) $_POST['product_backlog_id'];
@@ -42,8 +49,9 @@
 	$backlogs = $agilemantis_pb->getProductBacklogs();
 ?>
 <br>
-<div class="table-container">
-<table align="center" class="width100" cellspacing="1">
+<div class="widget-main no-padding">
+	<div class="table-responsive">
+<table class="table table-bordered table-condensed table-hover table-striped">
 	<tr>
 		<td colspan="3"><b><?php echo plugin_lang_get( 'manage_product_backlogs_title' )?></b> 
 		<form action="<?php echo plugin_page( "edit_product_backlog.php" )?>" method="post">
@@ -87,9 +95,12 @@
 		</td>
 	</tr>
 	<?php }}?>
-</table></div>
+</table>
+</div>
+</div>
+
 <?php } else { ?>
 <br>
 	<center><span style="color:red; font-size:16px; font-weight:bold;"></span></center>
 <?php } ?>
-<?php html_page_bottom() ?>
+<?php layout_page_end();?>

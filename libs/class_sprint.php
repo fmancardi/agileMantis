@@ -46,8 +46,8 @@ class gadiv_sprint extends gadiv_commonlib {
 		$orderby = "";
 		$startjoin = "";
 		$removeStatus = ' WHERE status != 2';
-		$klickStatus = $_GET['klickStatus'];
-		$disable_click = $_POST['disable_click'];
+		$klickStatus = isset($_GET['klickStatus']) ? $_GET['klickStatus'] : false;
+		$disable_click = isset($_POST['disable_click']) ? $_POST['disable_click'] : '';
 		$clicked = $klickStatus == 1 && $disable_click != 1;
 		
 		if( isset( $_POST['show_all_sprints'] ) || $clicked || $show_closed_sprints == 1 ) {

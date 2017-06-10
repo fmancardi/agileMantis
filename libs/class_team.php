@@ -82,6 +82,7 @@ class gadiv_team extends gadiv_commonlib {
 	# get all Teams with sorting options
 	function getTeams() {
 		$t_mantis_user_table = db_get_table( 'mantis_user_table' );
+		$addsql = '';
 		
 		if( $_GET['sort_by'] ) {
 			if( $_SESSION['order'] == 0 ) {
@@ -139,7 +140,8 @@ class gadiv_team extends gadiv_commonlib {
 				GROUP BY name";
 		$t_params = array($this->name,$this->id );
 		$isTeam = $this->executeQuery( $t_sql, $t_params );
-		if( $isTeam[0]['tnz'] > 0 ) {
+
+		if( is_array($isTeam) && count($isTeam) && $isTeam[0]['tnz'] > 0 ) {
 			return false;
 		} else {
 			return true;
@@ -177,11 +179,17 @@ class gadiv_team extends gadiv_commonlib {
 			$t_params = array($row['id'] );
 			$developer = $this->executeQuery( $t_sql, $t_params );
 			
-			if( $scmaster[0]['scrum_master'] > 0 && $prowner[0]['product_owner'] > 0 && $developer[0]['developer'] > 0 && $row['product_backlog'] > 0 ) {
-				$teams[$num]['id'] = $row['id'];
-				$teams[$num]['name'] = $row['name'];
-				$teams[$num]['product_backlog'] = $row['product_backlog'];
-			}
+			if( is_array($scmaster) && count($scmaster) > 0 &&
+				is_array($prowner) && count($prowner) > 0 &&
+                is_array($developer) && count($developer) > 0
+			  )
+			{	
+				if( $scmaster[0]['scrum_master'] > 0 && $prowner[0]['product_owner'] > 0 && $developer[0]['developer'] > 0 && $row['product_backlog'] > 0 ) {
+					$teams[$num]['id'] = $row['id'];
+					$teams[$num]['name'] = $row['name'];
+					$teams[$num]['product_backlog'] = $row['product_backlog'];
+				}
+		    }
 		}
 		return $teams;
 	}
@@ -230,7 +238,8 @@ class gadiv_team extends gadiv_commonlib {
 				ORDER BY username ASC";
 		$t_params = array($this->id );
 		$result = $this->executeQuery( $t_sql, $t_params );
-		return $result[0]['user_id'];
+		return (is_array($result) && count($result) > 0) ?
+               $result[0]['user_id'] : 0;
 	}
 	
 	# get the current Scrum Master of one team
@@ -245,7 +254,9 @@ class gadiv_team extends gadiv_commonlib {
 				ORDER BY username ASC";
 		$t_params = array($this->id );
 		$result = $this->executeQuery( $t_sql, $t_params );
-		return $result[0]['user_id'];
+		return (is_array($result) && count($result) > 0) ?
+               $result[0]['user_id'] : 0;
+
 	}
 	
 	# get all developer of one team

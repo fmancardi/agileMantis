@@ -83,6 +83,8 @@ class gadiv_availability extends gadiv_commonlib {
 		$t_sql = "SELECT * FROM gadiv_rel_user_availability WHERE user_id=" . db_param( 0 );
 		$t_params = array( $this->user_id );
 		$t_user = $this->executeQuery( $t_sql, $t_params );
+		$uc = array();
+
 		if( !empty( $t_user ) ) {
 			foreach( $t_user as $num => $row ) {
 				$convertedDate = substr($row['date'], 0, 10);
@@ -164,7 +166,8 @@ class gadiv_availability extends gadiv_commonlib {
 					WHERE user_id=" . db_param( 0 );
 		$t_params = array( $p_user_id );
 		$x = $this->executeQuery( $t_sql, $t_params );
-		$t_user = $x[0];
+
+		$t_user = isset($x[0]) ? $x[0] : array();
 		
 				
 		if( $p_month != date( 'n', time() ) ) {
@@ -194,9 +197,10 @@ class gadiv_availability extends gadiv_commonlib {
 			$t_sql = "INSERT INTO gadiv_rel_user_availability
 						VALUES ( " . db_param( 0 ) . "," . db_param( 1 ) . "," . db_param( 2 ) . ")";
 			
-			if ( is_null( $t_user[$t_day_string] ) ) {
+			if( !isset($t_user[$t_day_string]) || is_null( $t_user[$t_day_string] ) )
+			{
 				$t_user[$t_day_string] = 0.00;
-			}
+			}	
 			
 			$t_params = array( $p_user_id, $this->getDateFormat($p_year,$p_month,$i),  $t_user[$t_day_string] );
 			db_query_bound( $t_sql, $t_params );
@@ -242,9 +246,19 @@ class gadiv_availability extends gadiv_commonlib {
 				WHERE user_id=" . db_param( 0 );
 		$t_params = array( $p_user_id );
 		$t_user = $this->executeQuery( $t_sql, $t_params );
-		$t_user[0]['availability'] = $t_user[0]['monday'] + $t_user[0]['tuesday'] +
-			 $t_user[0]['wednesday'] + $t_user[0]['thursday'] + $t_user[0]['friday'] +
-			 $t_user[0]['saturday'] + $t_user[0]['sunday'];
+
+		if (!isset($t_user[0])) 
+		{
+			$t_user[0]['monday'] = $t_user[0]['tuesday'] =
+			$t_user[0]['wednesday'] = $t_user[0]['thursday'] = 
+			$t_user[0]['friday'] = 0;
+			$t_user[0]['saturday'] = $t_user[0]['sunday'] = 0;
+		}
+		$t_user[0]['availability'] = $t_user[0]['monday'] + 
+			     $t_user[0]['tuesday'] +
+				 $t_user[0]['wednesday'] + $t_user[0]['thursday'] + 
+				 $t_user[0]['friday'] +
+				 $t_user[0]['saturday'] + $t_user[0]['sunday'];
 		
 		switch( $p_day ) {
 			case '7':
@@ -282,7 +296,11 @@ class gadiv_availability extends gadiv_commonlib {
 					WHERE user_id=" . db_param( 0 );
 		$t_params = array( $p_id );
 		$t_is = $this->executeQuery( $t_sql, $t_params );
-		return ($t_is[0]['marked'] == 1);
+		if( isset($t[0]) )
+		{
+			return ($t_is[0]['marked'] == 1);
+		}
+		return false;	
 	}
 }
 ?>

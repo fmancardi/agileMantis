@@ -31,7 +31,10 @@ class gadiv_agileuser extends gadiv_commonlib {
 	# get all agileMantis users with filter options
 	function getAgileUser( $p_only_developer = false ) {
 		$t_mantis_user_table = db_get_table( 'mantis_user_table' );
-		
+		$t_condition = '';
+		$t_username_filter = '';
+		$t_params = null;
+
 		if( $_GET['filter'] ) {
 			$t_username_filter = "AND username LIKE " . db_param( 0 ) . " ";
 			$t_params[] = $_GET['filter'] . '%';
@@ -55,12 +58,15 @@ class gadiv_agileuser extends gadiv_commonlib {
 	# load all mantis user with filter and sorting options
 	function getAllUser() {
 		$t_mantis_user_table = db_get_table( 'mantis_user_table' );
-		
-		if( $_GET['filter'] != "" ) {
+		$t_username_filter = '';
+		$t_orderby = '';
+        $t_params = null;
+        
+		if( isset($_GET['filter']) && $_GET['filter'] != "" ) {
 			$t_username_filter = " WHERE username LIKE " . db_param( 0 ) . " ";
 			$t_params[] = $_GET['filter'] . '%';
 		}
-		if( $_GET['sort_by'] ) {
+		if( isset($_GET['sort_by']) && $_GET['sort_by'] ) {
 			if( $_SESSION['order'] == 0 ) {
 				$_SESSION['order'] = 1;
 				$direction = 'ASC';
@@ -81,7 +87,7 @@ class gadiv_agileuser extends gadiv_commonlib {
 			}
 		}
 		
-		if( !$_GET['sort_by'] ) {
+		if( isset($_GET['sort_by']) && !$_GET['sort_by'] ) {
 			$t_orderby = " ORDER BY username ASC";
 			$_SESSION['order'] = 1;
 		}
@@ -139,7 +145,7 @@ class gadiv_agileuser extends gadiv_commonlib {
 		}
 		
 		// Den User gibt es schon -> update, falls nichts dagegen spricht
-		if( $t_user[0]['user_id'] > 0 ) {
+		if( is_array($t_user) && count($t_user) >0 && $t_user[0]['user_id'] > 0 ) {
 			$t_sql = "UPDATE gadiv_additional_user_fields 
 							SET participant=" . db_param( 0 ) . ", 
 							developer=" . db_param( 1 ) . ", 

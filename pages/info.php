@@ -25,8 +25,9 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-	html_page_top(plugin_lang_get( 'info_title' ));
-	
+	layout_page_header(plugin_lang_get( 'info_title' ));
+	layout_page_begin();
+
 	if(!config_is_set('plugin_agileMantis_gadiv_agilemantis_version')){
 		config_set('plugin_agileMantis_gadiv_agilemantis_version', 0);
 	}
@@ -38,11 +39,10 @@
 <br>
 <?php include(AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php')?>
 <br>
-<?php
-	echo $system;
-?>
-<div class="table-container">
-<table align="center" class="width75" cellspacing="1">
+<div class="widget-main no-padding">
+	<div class="table-responsive">
+
+<table class="table table-bordered table-condensed table-hover table-striped">
 <tr>
 	<td colspan="2"><b><?php echo plugin_lang_get( 'info_title' )?></b></td>
 </tr>
@@ -64,7 +64,9 @@
 	<td class="category"><?php echo plugin_lang_get( 'info_contact_email' )?></td>
 	<td><a href="mailto:agileMantis@gadiv.de">agileMantis@gadiv.de</a></td>
 </tr>
-</table></div>
+</table>
+</div>
+</div>
 <br>
 <?php
 if(plugin_is_loaded('agileMantisExpert')){
@@ -74,4 +76,4 @@ if(plugin_is_loaded('agileMantisExpert')){
 <?php } else {
 		echo '<br><center><span class="message_error">'.
 		plugin_lang_get( 'info_error_921000' ).'</span></center>';}?>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

@@ -25,7 +25,9 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-html_page_top( plugin_lang_get( 'manage_sprints_title' ) );
+layout_page_header( plugin_lang_get( 'manage_sprints_title' ) );
+layout_page_begin();
+
 $t_user_right = $agilemantis_au->authUser();
 if( $t_user_right == 2 || $t_user_right == 3 || current_user_is_administrator() ) {
 	?>
@@ -33,6 +35,19 @@ if( $t_user_right == 2 || $t_user_right == 3 || current_user_is_administrator() 
 <?php
 	include (AGILEMANTIS_PLUGIN_URI . '/pages/footer_menu.php');
 	
+	$kj = array('deleteSprint','sprint_id','disable_click','show_all_sprints');
+	foreach ($kj as $yy) 
+	{
+		$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+	}
+
+    $kj = array('klickStatus');
+	foreach ($kj as $yy) 
+	{
+		$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';
+	}
+
+
 	# delete selected sprint by id
 	if( $_POST['deleteSprint'] != "" ) {
 		$agilemantis_sprint->id = ( int ) $_POST['sprint_id'];
@@ -41,7 +56,7 @@ if( $t_user_right == 2 || $t_user_right == 3 || current_user_is_administrator() 
 	?>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="4"><b><?php echo plugin_lang_get( 'manage_sprints_title' )?></b>
 				<form action="<?php echo plugin_page("edit_sprint.php")?>" method="post">
@@ -189,7 +204,7 @@ if( $t_user_right == 2 || $t_user_right == 3 || current_user_is_administrator() 
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td style="background: #fcbdbd;"><?php echo plugin_lang_get( 'status_open' )?></td>
 			<td style="background: #C2DFFF;"><?php echo plugin_lang_get( 'status_running' )?></td>
@@ -209,4 +224,4 @@ if( $t_user_right == 2 || $t_user_right == 3 || current_user_is_administrator() 
 <?php
 	}
 ?>
-<?php html_page_bottom() ?>
+<?php layout_page_end(); ?>

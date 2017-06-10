@@ -26,12 +26,18 @@
 
 
 	
-	html_page_top(plugin_lang_get( 'manage_teams_title' )); 
+	layout_page_header(plugin_lang_get( 'manage_teams_title' )); 
+	layout_page_begin();
 ?>
 <br>
 <?php include(AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php');?>
 <br>
 <?php
+$kj = array('deleteTeam','team_id');
+foreach ($kj as $yy) 
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+}
 
 # delete team
 if( $_POST['deleteTeam'] != "" ) {
@@ -43,8 +49,10 @@ if( $_POST['deleteTeam'] != "" ) {
 # get all teams
 $teams = $agilemantis_team->getTeams();
 ?>
-<div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+<div class="widget-main no-padding">
+	<div class="table-responsive">
+
+<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="6"><b><?php echo plugin_lang_get( 'manage_teams_title' )?></b>
 				<form action="<?php echo plugin_page( "edit_team.php" )?>"
@@ -103,4 +111,6 @@ $teams = $agilemantis_team->getTeams();
 	<?php }}?>
 </table>
 </div>
-<?php html_page_bottom() ?>
+</div>
+
+<?php layout_page_end() ?>

@@ -171,7 +171,9 @@ class gadiv_projects extends gadiv_commonlib {
 					GROUP BY project_id";
 		$t_params = array( $project_id );
 		$result = $this->executeQuery( $t_sql, $t_params );
-		if( $result[0]['projects'] > 1 ) {
+
+
+		if( is_array($result) && count($result) > 0 && $result[0]['projects'] > 1 ) {
 			return false;
 		}
 		return true;

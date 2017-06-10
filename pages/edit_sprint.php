@@ -25,7 +25,8 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-	html_page_top(plugin_lang_get( 'edit_sprint_title' )); 
+	layout_page_header(plugin_lang_get( 'edit_sprint_title' )); 
+	layout_page_begin();
 ?>
 <br>
 <?php include(AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php');?>
@@ -33,10 +34,34 @@
 <?php
 
 // Redirect to backlog list view if invalid or back_button
+$kj = array('action','back_button','product_backlog_id','id','name',
+	        'start_date','end_date','team_id','description','daily_scrum',
+	        'change_description','status','save_sprint','old_end_date',
+	        'sprint_id','end','edit','fromProductBacklog','productBacklogName',
+	        'fromSprintBacklog','fromTaskboard','fromDailyScrum',
+	        'fromStatistics');
+
+foreach ($kj as $yy) 
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+}
+
+$kj = array('sprint_id','end','edit');
+
+foreach ($kj as $yy) 
+{
+	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';
+}
+
+
 
 if( empty($_POST) || $_POST['back_button'] ) {
 	header( $agilemantis_sprint->forwardReturnToPage( "sprints.php" ) );
 }
+
+$system = null;
+$disabled = '';
+$disables = '';
 
 # set current date
 $current_date = mktime( 0, 0, 0, date( 'm' ), date( 'd' ), date( 'Y' ) );
@@ -251,6 +276,9 @@ if( $_POST['edit'] ) {
 	$agilemantis_sprint->sprint_id = implode( '', array_flip( $_POST['edit'] ) );
 }
 
+$s = array('start' => null, 'end' => null, 'id' => -1, 'team_id' => -1,
+	       'status' => false,'name' => null, 'description' => null);
+
 if( $agilemantis_sprint->sprint_id > 0 ) {
 	$s = $agilemantis_sprint->getSprintByName();
 	
@@ -406,22 +434,26 @@ if( !$s['end'] ) {
 			}
 			
 			$teamdata = $agilemantis_team->getCompleteTeams();
-			foreach( $teamdata as $num => $row ) {
-				$teamSelected = '';
-				if( $row['id'] == $team_id ) {
-					$teamSelected = 'selected';
-					$selectedProductBacklog = $row['product_backlog'];
-					$selectedTeam = $row['id'];
+			$productBacklog = array(0 => null);
+			if( is_array($teamdata) )
+			{
+				foreach( $teamdata as $num => $row ) {
+					$teamSelected = '';
+					if( $row['id'] == $team_id ) {
+						$teamSelected = 'selected';
+						$selectedProductBacklog = $row['product_backlog'];
+						$selectedTeam = $row['id'];
+						
+						$agilemantis_team->id = $selectedProductBacklog;
+						$productBacklog = $agilemantis_team->getSelectedProductBacklog();
+						$agilemantis_team->id = $selectedTeam;
+						$t = $agilemantis_team->getSelectedTeam();
+					}
 					
-					$agilemantis_team->id = $selectedProductBacklog;
-					$productBacklog = $agilemantis_team->getSelectedProductBacklog();
-					$agilemantis_team->id = $selectedTeam;
-					$t = $agilemantis_team->getSelectedTeam();
+					?><option value="<?php echo $row['id']?>"
+								<?php echo $teamSelected?>><?php echo $row['name']?></option><?php
 				}
-				
-				?><option value="<?php echo $row['id']?>"
-							<?php echo $teamSelected?>><?php echo $row['name']?></option><?php
-			}
+			}	
 			?>
 		</select>
 			
@@ -475,4 +507,4 @@ if( !$s['end'] ) {
 	</div>
 </form>
 <div style="clear: both"></div>
-<?php html_page_bottom() ?>
+<?php layout_page_end(); ?>

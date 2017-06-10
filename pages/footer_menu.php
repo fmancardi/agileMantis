@@ -28,6 +28,17 @@ $user = $commonlib->getAdditionalUserFields( auth_get_current_user_id() );
 $getPage = explode( '/', $_SERVER['REQUEST_URI'] );
 $lai = count( $getPage ) - 1;
 
+$k2g = array('filter','sort_by','pbid','klickStatus');
+foreach($k2g as $yy)
+{
+	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';
+}	
+$_POST['sprintName'] = isset($_POST['sprintName']) ? $_POST['sprintName'] : '';
+
+$style_pbl = $style_team = $style_av = $style_cc  = $style_av = '';
+$style_sprints = $style_config = $style_user = $style_team = $style_pbl = '';
+
+
 if( $user[0]['administrator'] == 1 || current_user_is_administrator() ) {
 	# create hover / active effects by requested uri
 	switch( $getPage[$lai] ) {

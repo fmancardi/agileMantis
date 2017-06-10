@@ -26,14 +26,35 @@
 
 ini_set("display_errors",1);
 	
-	html_page_top( plugin_lang_get( 'manage_availability_title' ) ); 
+	layout_page_header( plugin_lang_get( 'manage_availability_title' ) ); 
+	layout_page_begin();
 ?>
 <br>
 <?php include( AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php' ); ?>
 <br>
+<?php
+$kj = array('kalender','standard_availability','staycal','action',
+	        'back_button','team_id',
+	        'mo','tu','we','th','fr','sa','su',
+            'month','fromProductBacklog','productBacklogName','fromStatistics',
+            'fromSprintBacklog','fromTaskboard','fromDailyScrum');
+
+foreach ($kj as $yy) 
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+}
+$system = null;
+$hinweis = null;
+$error = '';
+$before = '';
+$after = '';
+
+?>
 <?php if( !$_POST['kalender'] && $_POST['standard_availability']=="" && $_POST['staycal'] == 0 ) { ?>
-<div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+<div class="widget-main no-padding">
+	<div class="table-responsive">
+
+<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td><a href="<?php echo plugin_page("availability.php")?>"><?php 
 						echo plugin_lang_get( 'manage_availability_show_all' )?></a></td>
@@ -66,63 +87,69 @@ ini_set("display_errors",1);
 		</tr>
 	</table>
 </div>
+</div>
 <?php
 	
 	# save standard week availability
+	$mark_user = array();
 	if( $_POST['action'] == "save" ) {
 		
-		foreach( $_POST['mo'] as $num => $row ) {
-			if( $agilemantis_av->getUserMarking( $num ) ) {
-				$hinweis = plugin_lang_get( 'manage_availability_error_108302' );
-				$mark_user[$num] = 1;
-			} 
+		if( is_array($_POST['mo']) )
+		{
 			
-			$_POST['mo'][$num] = str_replace( ',', '.', $_POST['mo'][$num] );
-			$_POST['tu'][$num] = str_replace( ',', '.', $_POST['tu'][$num] );
-			$_POST['we'][$num] = str_replace( ',', '.', $_POST['we'][$num] );
-			$_POST['th'][$num] = str_replace( ',', '.', $_POST['th'][$num] );
-			$_POST['fr'][$num] = str_replace( ',', '.', $_POST['fr'][$num] );
-			$_POST['sa'][$num] = str_replace( ',', '.', $_POST['sa'][$num] );
-			$_POST['su'][$num] = str_replace( ',', '.', $_POST['su'][$num] );
-			
-			if( !is_numeric( $_POST['mo'][$num] ) || !is_numeric( $_POST['tu'][$num] ) ||
-				 !is_numeric( $_POST['we'][$num] ) || !is_numeric( $_POST['th'][$num] ) ||
-				 !is_numeric( $_POST['fr'][$num] ) || !is_numeric( $_POST['sa'][$num] ) ||
-				 !is_numeric( $_POST['su'][$num] ) ) {
-				$system = plugin_lang_get( 'manage_availability_error_985300' );
-				$mark_user[$num] = 1;
+			foreach( $_POST['mo'] as $num => $row ) {
+				if( $agilemantis_av->getUserMarking( $num ) ) {
+					$hinweis = plugin_lang_get( 'manage_availability_error_108302' );
+					$mark_user[$num] = 1;
+				} 
+				
+				$_POST['mo'][$num] = str_replace( ',', '.', $_POST['mo'][$num] );
+				$_POST['tu'][$num] = str_replace( ',', '.', $_POST['tu'][$num] );
+				$_POST['we'][$num] = str_replace( ',', '.', $_POST['we'][$num] );
+				$_POST['th'][$num] = str_replace( ',', '.', $_POST['th'][$num] );
+				$_POST['fr'][$num] = str_replace( ',', '.', $_POST['fr'][$num] );
+				$_POST['sa'][$num] = str_replace( ',', '.', $_POST['sa'][$num] );
+				$_POST['su'][$num] = str_replace( ',', '.', $_POST['su'][$num] );
+				
+				if( !is_numeric( $_POST['mo'][$num] ) || !is_numeric( $_POST['tu'][$num] ) ||
+					 !is_numeric( $_POST['we'][$num] ) || !is_numeric( $_POST['th'][$num] ) ||
+					 !is_numeric( $_POST['fr'][$num] ) || !is_numeric( $_POST['sa'][$num] ) ||
+					 !is_numeric( $_POST['su'][$num] ) ) {
+					$system = plugin_lang_get( 'manage_availability_error_985300' );
+					$mark_user[$num] = 1;
+				}
+				
+				if( $_POST['mo'][$num] > 24.00 || $_POST['tu'][$num] > 24.00 ||
+					 $_POST['we'][$num] > 24.00 || $_POST['fr'][$num] > 24.00 ||
+					 $_POST['th'][$num] > 24.00 || $_POST['th'][$num] > 24.00 ||
+					 $_POST['sa'][$num] > 24.00 || $_POST['su'][$num] > 24.00 ) {
+					$system = plugin_lang_get( 'manage_availability_error_984302' );
+					$mark_user[$num] = 1;
+				}
+				
+				if( $_POST['mo'][$num] < 0 || $_POST['tu'][$num] < 0 || $_POST['we'][$num] < 0 ||
+					 $_POST['fr'][$num] < 0 || $_POST['th'][$num] < 0 || $_POST['th'][$num] < 0 ||
+					 $_POST['sa'][$num] < 0 || $_POST['su'][$num] < 0 ) {
+					$system = plugin_lang_get( 'manage_availability_error_984303' );
+					$mark_user[$num] = 1;
+				}
+				
+				if( $system == "" ) {
+					$agilemantis_av->user_id = $num;
+					$agilemantis_av->monday = $_POST['mo'][$num];
+					$agilemantis_av->tuesday = $_POST['tu'][$num];
+					$agilemantis_av->wednesday = $_POST['we'][$num];
+					$agilemantis_av->thursday = $_POST['th'][$num];
+					$agilemantis_av->friday = $_POST['fr'][$num];
+					$agilemantis_av->saturday = $_POST['sa'][$num];
+					$agilemantis_av->sunday = $_POST['su'][$num];
+					$agilemantis_av->availability = $row + $_POST['tu'][$num] + $_POST['we'][$num] +
+						 $_POST['th'][$num] + $_POST['fr'][$num] + $_POST['sa'][$num] +
+						 $_POST['su'][$num];
+					$agilemantis_av->setUserAvailability();
+				}
 			}
-			
-			if( $_POST['mo'][$num] > 24.00 || $_POST['tu'][$num] > 24.00 ||
-				 $_POST['we'][$num] > 24.00 || $_POST['fr'][$num] > 24.00 ||
-				 $_POST['th'][$num] > 24.00 || $_POST['th'][$num] > 24.00 ||
-				 $_POST['sa'][$num] > 24.00 || $_POST['su'][$num] > 24.00 ) {
-				$system = plugin_lang_get( 'manage_availability_error_984302' );
-				$mark_user[$num] = 1;
-			}
-			
-			if( $_POST['mo'][$num] < 0 || $_POST['tu'][$num] < 0 || $_POST['we'][$num] < 0 ||
-				 $_POST['fr'][$num] < 0 || $_POST['th'][$num] < 0 || $_POST['th'][$num] < 0 ||
-				 $_POST['sa'][$num] < 0 || $_POST['su'][$num] < 0 ) {
-				$system = plugin_lang_get( 'manage_availability_error_984303' );
-				$mark_user[$num] = 1;
-			}
-			
-			if( $system == "" ) {
-				$agilemantis_av->user_id = $num;
-				$agilemantis_av->monday = $_POST['mo'][$num];
-				$agilemantis_av->tuesday = $_POST['tu'][$num];
-				$agilemantis_av->wednesday = $_POST['we'][$num];
-				$agilemantis_av->thursday = $_POST['th'][$num];
-				$agilemantis_av->friday = $_POST['fr'][$num];
-				$agilemantis_av->saturday = $_POST['sa'][$num];
-				$agilemantis_av->sunday = $_POST['su'][$num];
-				$agilemantis_av->availability = $row + $_POST['tu'][$num] + $_POST['we'][$num] +
-					 $_POST['th'][$num] + $_POST['fr'][$num] + $_POST['sa'][$num] +
-					 $_POST['su'][$num];
-				$agilemantis_av->setUserAvailability();
-			}
-		}
+		}	
 	}
 	
 	$userData = $agilemantis_au->getAgileUser( true );
@@ -158,7 +185,7 @@ ini_set("display_errors",1);
 	<input type="hidden" name="action" value="save"> <input type="hidden"
 		name="team_id" value="<?php echo $_POST['team_id']?>">
 	<div class="table-container">
-		<table align="center" class="width100" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td colspan="9"><b><?php echo plugin_lang_get( 'manage_availability_standard_title' )?></b></td>
 				<td><input type="text" name="month" value="3" size="1" maxlength="2">
@@ -183,7 +210,9 @@ ini_set("display_errors",1);
 			<?php if($row['developer'] == 1){?>
 			<tr <?php echo helper_alternate_class() ?>>
 				<td
-					<?php if($mark_user[$row['id']] == 1 || $agilemantis_av->getUserMarking($row['id'])){?>
+					<?php if( (isset($mark_user[$row['id']]) && 
+						       $mark_user[$row['id']] == 1) || 
+					         $agilemantis_av->getUserMarking($row['id'])){?>
 					style="background: #FF7C7F;" <?php } else {?>
 					style="background:none" <?php }?>><?php echo $row['username']?></td>
 				<td><input type="text" style="width: 100px;"
@@ -273,6 +302,7 @@ if( $_POST['back_button'] ) {
 					}
 				}
 				$current_day = $key;
+				$count_over_capacity = array();
 				if( $current_day >= $today_date && $system == "" ) {
 					if( $agilemantis_av->getCapacityToSavedAvailability( $user_id, $key ) > $value ) {
 						$hinweis = plugin_lang_get( 'manage_availability_error_108300' );
@@ -280,7 +310,7 @@ if( $_POST['back_button'] ) {
 						$_POST['staycal'] = 1;
 					}
 				}
-				if( $count_over_capacity[$user_id] > 0 ) {
+				if( isset($count_over_capacity[$user_id]) && $count_over_capacity[$user_id] > 0 ) {
 					$agilemantis_av->setUserAsMarkType( $user_id, 1 );
 				} else {
 					$agilemantis_av->setUserAsMarkType( $user_id, 0 );
@@ -435,4 +465,4 @@ if( $_POST['kalender'] || $_POST['standard_availability'] != "" || $_POST['stayc
 	<br>
 </form>
 <?php }?>
-<?php html_page_bottom() ?>
+<?php layout_page_end(); ?>

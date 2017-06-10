@@ -25,7 +25,8 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-	html_page_top(plugin_lang_get( 'manage_user_title' ));
+	layout_page_header(plugin_lang_get( 'manage_user_title' ));
+	layout_page_begin();
 
 	# check if user has enough rights
 	$t_user_right = $agilemantis_au->authUser();
@@ -34,28 +35,46 @@
 <?php include( AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php' );?>
 <br>
 <?php
+	$kj = array('action','agileMantisParticipant','agileMantisAdmin',
+		        'agileMantisDeveloper');
+	foreach($kj as $yy)
+	{
+		$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : ''; 
+	}	
+
 	# save / update agileMantis additional user rights
 	if( $_POST['action'] == 'saveUsers' ) {
-		if( $_SESSION['expert'] == "" ) {
+		if( (isset($_SESSION['expert']) && $_SESSION['expert'] == "") || 
+            !isset($_SESSION['expert'])
+		  ) {
 			$rsUser = $agilemantis_au->getAllUser();
 			foreach( $rsUser as $num => $usr ) {
-				$i = $usr[id];
+				$i = $usr['id'];
 
-				if( $_SESSION['participant'][$i] == 1 || $_SESSION['developer'][$i] == 1 ) {
+				if( (isset($_SESSION['participant']) &&
+					 isset($_SESSION['participant'][$i]) && 
+					 $_SESSION['participant'][$i] == 1) || 
+					(isset($_SESSION['developer']) && 
+					 isset($_SESSION['developer'][$i]) &&
+					 $_SESSION['developer'][$i] == 1) ) {
 					$particpant = 1;
 				} else {
 					$particpant = 0;
 					$agilemantis_team->deleteStakeholderFromTeams( $i );
 				}
 
-				if( $_SESSION['developer'][$i] == 1 ) {
+				if( isset($_SESSION['developer']) && 
+					isset($_SESSION['developer'][$i]) && 
+					$_SESSION['developer'][$i] == 1 ) {
 					$developer = 1;
 				} else {
 					$developer = 0;
 					$agilemantis_team->deleteScrumDeveloperFromTeams( $i );
 				}
 
-				if( $_SESSION['administrator'][$i] == 1 ) {
+				if( isset($_SESSION['administrator']) &&
+					isset($_SESSION['administrator'][$i]) &&
+					$_SESSION['administrator'][$i] == 1 ) {
 					$administrator = 1;
 				} else {
 					$administrator = 0;
@@ -65,7 +84,13 @@
 
 			}
 		} else {
-			$userArray = array_keys( $_SESSION['expert'] );
+
+            $userArray = array();
+            $userArray[0] = -1;
+            if( isset($_SESSION['expert']) )
+            {
+				$userArray = array_keys( $_SESSION['expert'] );
+            }	
 			$agilemantis_au->setExpert( $userArray[0], 0 );
 		}
 		echo '<center><span class="message_ok">' .
@@ -127,8 +152,9 @@
 	}
 	?>
 
-<div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+<div class="widget-main no-padding">
+	<div class="table-responsive">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td><a href="<?php echo plugin_page("agileuser.php")?>">
 						<?php echo plugin_lang_get( 'manage_user_show_all' )?></a></td>
@@ -176,9 +202,11 @@
 		</tr>
 	</table>
 </div>
+</div>
 <br>
-<div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+<div class="widget-main no-padding">
+	<div class="table-responsive">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td
 				colspan="<?php
@@ -233,8 +261,17 @@
 			<input type="hidden" name="action" value="save">
 				<?php
 					if( !empty($user) ) {
+
 						foreach( $user AS $num => $row ) {
 							$mantis_role = $agilemantis_au->getAdditionalUserFields( $row['id'] );
+							if( count($mantis_role) == 0)
+							{
+								$mantis_role = array();
+								$mantis_role[0]['participant'] = 0;
+								$mantis_role[0]['developer'] = 0;
+								$mantis_role[0]['administrator'] = 0;
+								$mantis_role[0]['expert'] = 0;
+							}	
 				?>
 				<?php if( $_POST['agileMantisParticipant'] && $mantis_role[0]['participant'] == 1 ) {?>
 					<?php echo createTableView($row['id'], $row['username'], $row['realname'],
@@ -280,6 +317,7 @@
 		</form>
 	</table>
 </div>
+</div>
 <?php
 	} else {
 ?>
@@ -291,4 +329,4 @@
 <?php
 	}
 ?>
-<?php html_page_bottom() ?>
+<?php layout_page_end(); ?>

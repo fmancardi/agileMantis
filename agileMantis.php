@@ -40,7 +40,7 @@ class agileMantisPlugin extends MantisPlugin {
 		$this->description = "Enables Scrum on your MantisBT-Installation";
 		$this->page = "info";
 		$this->version = "2.2";
-		$this->requires = array( "MantisCore" => "1.2.5" );
+		$this->requires = array( "MantisCore" => "2.0" );
 		$this->author = "gadiv GmbH";
 		$this->contact = "agileMantis@gadiv.de";
 		$this->url = "http://www.gadiv.de";
@@ -643,7 +643,7 @@ class agileMantisPlugin extends MantisPlugin {
 	 * Get's executed after the normal schema upgrade process has executed.
 	 * This gives the plugin the chance to convert or normalize data after an upgrade
 	 */
-	function upgrade() {
+	function upgrade($p_schema=null) {
 
 		plugin_config_set( 'gadiv_agilemantis_version', $this->version = "2.2" );
 
@@ -680,6 +680,7 @@ class agileMantisPlugin extends MantisPlugin {
 		if( !$agilemantis_commonlib->projectHasBacklogs( helper_get_current_project() ) ) {
 			return;
 		}
+          $disabled = '';
 
 		if( $_SESSION['AGILEMANTIS_ISMANTISADMIN'] == 1
 				|| $_SESSION['AGILEMANTIS_ISMANTISUSER'] == 1 ) {
@@ -687,6 +688,15 @@ class agileMantisPlugin extends MantisPlugin {
 			$ppid = helper_get_current_project();
 			$pbl = $agilemantis_pb->getProjectProductBacklogs( $ppid );
 			$s = $agilemantis_sprint->getSprints();
+               
+               if( !isset($story['businessValue']) ) 
+               {
+                    $story = array();
+                    $story['businessValue'] = ''; 
+                    $story['storypoints'] = ''; 
+                    $story['name'] = ''; 
+                    $story['plannedWork'] = '';       
+               }     
 
 				echo '
 					<tr '.helper_alternate_class().'>
@@ -1051,6 +1061,14 @@ class agileMantisPlugin extends MantisPlugin {
 
 			$user = $agilemantis_commonlib->getAdditionalUserFields( auth_get_current_user_id() );
 
+               if( count($user) == 0 )
+               {
+                    $user = array();
+                    $user[0]['administrator'] = 0;
+                    $user[0]['developer'] = 0;
+                    $user[0]['participant'] = 0;                    
+               }     
+
 			# unset buglist cookie
 			if( isset($_GET['page']) && !stristr($_GET['page'],'assume_userstories') ) {
 				setcookie( 'BugListe', '', time() - 6410) ;
@@ -1199,6 +1217,15 @@ class agileMantisPlugin extends MantisPlugin {
 			global $agilemantis_sprint;
 
 			$user = $agilemantis_commonlib->getAdditionalUserFields( auth_get_current_user_id() );
+
+               if( count($user) == 0 )
+               {
+                    $user = array();
+                    $user[0]['administrator'] = 0;
+                    $user[0]['developer'] = 0;
+                    $user[0]['participant'] = 0;                    
+               }     
+
 			$menu = array();
 
 			# add product backlog menu item

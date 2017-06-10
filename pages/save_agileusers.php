@@ -27,6 +27,12 @@
 
 
 // check, if expert button was pressed by user
+$kj = array('expert','developer','administrator');
+foreach($kj as $yy)
+{
+    $_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : null;
+}
+
 $_SESSION['expert'] = $_POST['expert'];
 $isExpertButton = false;
 if( !empty( $_POST['expert'] ) ) {
@@ -44,23 +50,26 @@ $no = plugin_lang_get( 'manage_user_su_no' );
 // Only if above condition does not apply.
 $rsUser = $agilemantis_au->getAllUser();
 foreach( $rsUser as $num => $usr ) {
-	$i = $usr[id];
+	$i = $usr['id'];
 	
-	if( $_POST['participant'][$i] == 1 || $_POST['developer'][$i] == 1 ) {
+	if( (isset($_POST['participant'][$i]) && $_POST['participant'][$i] == 1) || 
+		(isset($_POST['developer'][$i]) && $_POST['developer'][$i] == 1) ) {
 		$particpant = 1;
 	} else {
 		$particpant = 0;
 	}
 	$_SESSION['participant'][$i] = $particpant;
 	
-	if( $_POST['developer'][$i] == 1 ) {
+	if( is_array($_POST['developer']) && isset($_POST['developer'][$i]) && 
+		$_POST['developer'][$i] == 1 ) {
 		$developer = 1;
 	} else {
 		$developer = 0;
 	}
 	$_SESSION['developer'][$i] = $developer;
 	
-	if( $_POST['administrator'][$i] == 1 ) {
+	if( is_array($_POST['administrator']) && isset($_POST['administrator'][$i]) &&
+		$_POST['administrator'][$i] == 1 ) {
 		$administrator = 1;
 	} else {
 		$administrator = 0;
@@ -71,7 +80,11 @@ foreach( $rsUser as $num => $usr ) {
 # For all users check, if change of rights is allowed.
 
 
-$stilTab = "<div class=\"table-container\"><table align=\"center\" style=\"width:300px\">";
+//$stilTab = "<div class=\"table-container\"><table align=\"center\" style=\"width:300px\">";
+
+$stilTab = '<div class="table-container">' .
+           '<table class="table table-bordered table-condensed ' .
+           'table-hover table-striped">';
 
 $users[0] = $stilTab; # No change
 $users[1] = $stilTab; # Right changed, no restrictions
@@ -87,7 +100,7 @@ for( $j = 0; $j <= 5; $j++ ) {
 $retMax = 0;
 
 foreach( $rsUser as $num => $usr ) {
-	$i = $usr[id];
+	$i = $usr['id'];
 	
 	$ret = $agilemantis_au->checkChangeRightsAllowed( $i, $_SESSION['participant'][$i], 
 		$_SESSION['developer'][$i], $_SESSION['administrator'][$i] );
@@ -108,7 +121,8 @@ $users[3] = $users[3] . "</table></div>";
 $users[4] = $users[4] . "</table></div>";
 $users[5] = $users[5] . "</table></div>";
 
-html_page_top( plugin_lang_get( 'manage_user_title' ) ); 
+layout_page_header( plugin_lang_get( 'manage_user_title' ) ); 
+layout_page_begin();
 
 ?>
 <br>
@@ -252,6 +266,6 @@ html_page_top( plugin_lang_get( 'manage_user_title' ) );
 </div>
 
 
-<?php html_page_bottom(); ?>
+<?php layout_page_end(); ?>
 
 

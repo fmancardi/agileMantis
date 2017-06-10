@@ -23,17 +23,34 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
-
-
 	
-	html_page_top(plugin_lang_get( 'edit_product_backlog_title' )); 
+	layout_page_header(plugin_lang_get( 'edit_product_backlog_title' ));
+	layout_page_begin(); 
 ?>
 <br>
 <?php include(AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php');?>
 <br>
-<?php
-	
+<?php	
 	# back button actions
+    $kj = array('back_button','action','pageFrom','edit','id','deleteProject',
+    	        'backProductBacklog','project_id','pbl_name',
+		        'pbl_name_old','pbl_email','pbl_user_id','pbl_description');
+
+    foreach($kj as $yy)
+    {
+    	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+    }	
+
+    $kj = array('pbid');
+    foreach($kj as $yy)
+    {
+    	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';
+    }	
+
+    $t_project_id = -1;
+    $system = null;
+    $pbData = null;
+
 
 	// Redirect to backlog list view if invalid or back_button
 	if( empty($_POST) || $_POST['back_button'] ) {
@@ -65,6 +82,8 @@
 		if( $_POST['project_id'] > 0 ) {
 			$t_default = null;
 			$t_user_id = NO_USER;
+			$t_src_project_id = intval($_POST['project_id']);
+
 			$t_view_issues_page_columns = config_get( 'view_issues_page_columns', 
 									$t_default, $t_user_id, $t_src_project_id );
 			
@@ -227,7 +246,7 @@
 		value="<?php echo $pbData[0]['name']?>"> <input type="hidden"
 		name="pbl_user_id" value="<?php echo $pbData[0]['user_id']?>">
 	<div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+	 <table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td class="form-title" colspan="3">
 				<?php echo plugin_lang_get( 'edit_product_backlog_title' )?>
@@ -269,10 +288,15 @@
 				*<?php echo plugin_lang_get( 'edit_product_backlog_user_email' )?>
 				
 				<a class="version_tooltip" href="javascript: void(0)" style="border-bottom: 0;">
-					<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png" height="16" width="16">
+					<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png" height="16" width="16"
+
+					title= "<?php echo plugin_lang_get( 'edit_product_backlog_team_user_info' )?>"
+					>
+					<!--
 					<span style="font-weight: normal; width: 500px; left: 25px;">
 						<?php echo plugin_lang_get( 'edit_product_backlog_team_user_info' )?>
 					</span>
+					-->
 				</a>
 			</td>
 				<td class="left">
@@ -304,7 +328,7 @@
 	<?php if($agilemantis_pb->id > 0){?>
 	<br>
 	<div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+				<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td class="form-title" colspan="3">
 				<?php echo plugin_lang_get( 'edit_product_backlog_projects' )?>
@@ -404,4 +428,4 @@
 		</table>
 	</div>
 	<?php }?>
-<?php html_page_bottom() ?>
+<?php layout_page_end(); ?>

@@ -37,7 +37,7 @@ class gadiv_calendar extends gadiv_commonlib {
 		# make a new instance of availability class and get user information
 		global $agilemantis_av;
 		$agilemantis_av->user_id = $user_id;
-		$team = ( int ) $_POST['team'];
+		$team = isset($_POST['team']) ? intval($_POST['team']) : null;
 		
 		# calculating the month attributes
 		$start_day = date( 'j', $start );
@@ -124,6 +124,7 @@ class gadiv_calendar extends gadiv_commonlib {
 			}
 		} else {
 			$user = $agilemantis_av->getUserCapacity();
+			$standard_month = -1;
 			if( $_POST['standard_availability'] != "" ) {
 				foreach( $_POST['standard_availability'] as $num => $row ) {
 					foreach( $row as $key => $value ) {
@@ -168,6 +169,7 @@ class gadiv_calendar extends gadiv_commonlib {
 		}
 		
 		$d = $end_day + 1;
+		$warning = '';
 		
 		# echo all days of the calendar and fill it with the collected values
 		$count[$user_id] = 0;
@@ -239,7 +241,7 @@ class gadiv_calendar extends gadiv_commonlib {
 				}
 			} else {
 				if( $i < $heute && $current_month >= $month && $current_year == $year ) {
-					if( $_POST['team'] ) {
+					if( isset($_POST['team']) && $_POST['team'] ) {
 						$value = sprintf( "%.2f", 
 							$user[$agilemantis_av->user_id]['' . $year_name . '-' . $month_name . '-' .
 								 sprintf( "%02d", $i ) . ''] );
@@ -250,9 +252,20 @@ class gadiv_calendar extends gadiv_commonlib {
 							 ']" class="dateField_disabled" value="' . $value .
 							 '" readonly></center></div>';
 					} else {
-						$value = sprintf( "%.2f", 
-							$user[$agilemantis_av->user_id]['' . $year_name . '-' . $month_name . '-' .
-								 sprintf( "%02d", $i ) . ''] );
+						
+						
+                        if( isset($user[$agilemantis_av->user_id]) )
+                        {
+							$value = sprintf( "%.2f", 
+								$user[$agilemantis_av->user_id]['' . $year_name . '-' . $month_name . '-' .
+									 sprintf( "%02d", $i ) . ''] );
+                        }	
+                        else
+                        {
+                        	$value = sprintf( "%.2f",0);
+                        }	
+
+
 						echo '<div class="current_month">' . sprintf( "%02d", $i ) .
 							 '<br><center><input type="text" name="capacity[' .
 							 $agilemantis_av->user_id . '][' . date( 'Y', $start ) . '-' .
@@ -269,13 +282,27 @@ class gadiv_calendar extends gadiv_commonlib {
 						$warning = 'color:red;font-weight:bold;';
 						$count[$user_id]++;
 					}
+					
+					$xx = date( 'Y', $start ) . '-' . date( 'm', $start ) . 
+					      '-' . sprintf( "%02d", $i );
+
+                    
+                    if( isset($user[$agilemantis_av->user_id]) && 
+                        isset($user[$agilemantis_av->user_id][$xx])
+                      )
+                    {	
+						$xval = $user[$agilemantis_av->user_id][$xx]; 
+                    }
+    				else
+    				{
+    					$xval = 0;
+    				}	
+    				$yy = sprintf( "%.2f", $xval);
+    				
 					echo '<div class="current_month">' . sprintf( "%02d", $i ) .
-						 '<br><center><input type="text" name="capacity[' . $agilemantis_av->user_id .
-						 '][' . date( 'Y', $start ) . '-' . date( 'm', $start ) . '-' .
-						 sprintf( "%02d", $i ) . ']" value="' . sprintf( "%.2f", 
-							$user[$agilemantis_av->user_id][date( 'Y', $start ) . '-' .
-							 date( 'm', $start ) . '-' . sprintf( "%02d", $i )] ) . '" style="' .
-						 $warning . '" class="dateField" maxlength="5"></center></div>';
+						 '<br><center><input type="text" name="capacity[' . $agilemantis_av->user_id . '][' . $xx . ']" value="' .
+						 $yy . '" style="' .
+					     $warning . '" class="dateField" maxlength="5"></center></div>';
 				}
 				
 				if( $i == $end_day ) {

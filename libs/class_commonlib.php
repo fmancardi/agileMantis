@@ -284,12 +284,17 @@ class gadiv_commonlib {
 	
 	# get all product backlogs with filter and sorting options
 	function getProductBacklogs( $p_id = "" ) {
+
+		$t_orderby = '';
+		$t_pb_id_filter = '';
+		$t_params = array();
+		
 		if( $p_id != "" ) {
 			$t_pb_id_filter = " WHERE id = " . db_param( 0 ) . " ";
 			$t_params[] = $p_id;
 		}
 		
-		if( $_GET['sort_by'] ) {
+		if( isset($_GET['sort_by']) && $_GET['sort_by'] ) {
 			if( $_SESSION['order'] == 0 ) {
 				$_SESSION['order'] = 1;
 				$t_direction = 'ASC';
@@ -307,7 +312,7 @@ class gadiv_commonlib {
 			}
 		}
 		
-		if( !$_GET['sort_by'] ) {
+		if( isset($_GET['sort_by']) && !$_GET['sort_by'] ) {
 			$t_orderby = " ORDER BY name ASC";
 			$_SESSION['order'] = 1;
 		}
@@ -633,7 +638,8 @@ class gadiv_commonlib {
 			 "ON tu.user_id=ut.id WHERE role LIKE '%1%' AND team_id=" . db_param( 0 );
 		$t_params = array( $p_id );
 		$t_name = $this->executeQuery( $t_sql, $t_params );
-		return $t_name[0]['username'];
+		return ( is_array($t_name) && count($t_name) == 1 ) ? 
+		         $t_name[0]['username'] : '';
 	}
 	
 	# get scrum master username
@@ -645,7 +651,8 @@ class gadiv_commonlib {
 			 "ON tu.user_id=ut.id WHERE role LIKE '%2%' AND team_id=" . db_param( 0 );
 		$t_params = array( $p_id );
 		$t_name = $this->executeQuery( $t_sql, $t_params );
-		return $t_name[0]['username'];
+		return (is_array($t_name) && count($t_name)) ? 
+		       $t_name[0]['username'] : '';
 	}
 	
 	//check the dateformat for only mssqlserver

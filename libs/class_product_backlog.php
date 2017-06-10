@@ -100,6 +100,7 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		db_query_bound( $t_sql, $t_params );
 		
 		$result = $this->executeQuery( "SELECT * FROM gadiv_productbacklogs ORDER BY name ASC" );
+		$pbs = '';
 		if( !empty( $result ) ) {
 			foreach( $result as $num => $row ) {
 				$pbs .= $row['name'] . '|';
@@ -173,7 +174,9 @@ class gadiv_productBacklog extends gadiv_commonlib {
 					GROUP BY name";
 		$t_params = array( $this->name );
 		$uniqueName = $this->executeQuery( $t_sql, $t_params );
-		if( $uniqueName[0]['uniqueName'] > 0 ) {
+
+		if( is_array($uniqueName) && count($uniqueName) == 1 && 
+			$uniqueName[0]['uniqueName'] > 0 ) {
 			return false;
 		} else {
 			return true;
@@ -229,9 +232,14 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		$t_sql = "SELECT count(*) AS pbTeams FROM gadiv_teams WHERE pb_id=" . db_param( 0 ) . " GROUP BY pb_id";
 		$t_params = array( (( int ) $id) );
 		$pbTeams = $this->executeQuery( $t_sql, $t_params );
-		if( $pbTeams[0]['pbTeams'] > 0 ) {
-			return true;
-		}
+
+		if( is_array($pbTeams) && count($pbTeams) == 1 &&
+			isset($pbTeams[0]['pbTeams']))
+		{
+			if( $pbTeams[0]['pbTeams'] > 0 ) {
+				return true;
+			}
+		}	
 		return false;
 	}
 	

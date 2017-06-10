@@ -25,7 +25,27 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-html_page_top( plugin_lang_get( 'edit_teams_title' ) );
+layout_page_header( plugin_lang_get( 'edit_teams_title' ) );
+layout_page_begin();
+
+$kj = array('action','back_button','addavailability','submit_button',
+	        'capacity','sprint','id','customer','user','manager',
+            'product_owner','old_product_owner','scrum_master','developer',
+            'old_scrum_master','old_team_name','deleteTeamMember','user_id',
+            'role_id','edit','t_name','t_description','daily_scrum'); 
+
+foreach ($kj as $yy) 
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+}
+
+$system = null;
+$t = null;
+$t_name = null;
+$t_description = null;
+$opoid = -1;
+$oscid = -1;
+
 
 if( empty($_POST) || $_POST['back_button'] ) {
 	header( $agilemantis_sprint->forwardReturnToPage( "teams.php" ) );
@@ -172,7 +192,7 @@ if( empty($_POST) || $_POST['back_button'] ) {
 					$tmp_user_id = null;
 					$tmpPb = $agilemantis_pb->getProductBacklogs( 
 											$agilemantis_team->product_backlog );
-					if( $tmpPb && sizeof( tmpPb ) === 1 ) {
+					if( $tmpPb && sizeof( $tmpPb ) === 1 ) {
 						$tmp_user_id = $tmpPb[0]['user_id'];
 					}
 					
@@ -184,7 +204,7 @@ if( empty($_POST) || $_POST['back_button'] ) {
 				} else {
 					$system = plugin_lang_get( 'edit_teams_error_923200' );
 				}
-				if( $_SESSION['hasUser'] == 1 && ( int ) $agilemantis_team->id > 0 
+				if( isset($_SESSION['hasUser']) && $_SESSION['hasUser'] == 1 && ( int ) $agilemantis_team->id > 0 
 						&& $_POST['product_backlogs'] > 0 
 						&& $_POST['user'] == 0 
 						&& $_POST['manager'] == 0 
@@ -236,7 +256,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 	<input type="hidden" name="action" value="edit"> <input type="hidden"
 		name="id" value="<?php echo $agilemantis_team->id?>">
 	<div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 			<tr>
 				<td class="form-title" colspan="3">
 			<?php echo plugin_lang_get( 'edit_teams_title' )?>
@@ -337,7 +358,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 	value="<?php echo $t[0]['pb_id']?>">
 <?php }?>
 <div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 		<tr <?php echo helper_alternate_class() ?>>
 		
 		
@@ -352,7 +374,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 		<tr>
 			<td class="form-title" colspan="2"><a name="ProductOwner">Product
 					Owner</a></td>
@@ -387,7 +410,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 		<tr>
 			<td class="form-title" colspan="2"><a name="ScrumMaster">Scrum Master</a>
 			</td>
@@ -420,7 +444,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 		<tr <?php echo helper_alternate_class() ?>>
 			<td class="form-title" colspan="4"><a name="Developer"><?php 
 						echo plugin_lang_get( 'edit_team_developer' )?></a>
@@ -510,7 +535,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 		<tr <?php echo helper_alternate_class() ?>>
 			<td class="form-title" colspan="4"><a name="ProductUser"><?php 
 				echo plugin_lang_get( 'edit_team_product_user' )?></a>
@@ -574,7 +600,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 		<tr <?php echo helper_alternate_class() ?>>
 			<td class="form-title" colspan="4"><a name="Manager">Manager</a></td>
 		</tr>
@@ -636,7 +663,8 @@ if( empty($_POST) || $_POST['back_button'] ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
+	
 		<tr <?php echo helper_alternate_class() ?>>
 			<td class="form-title" colspan="4"><a name="Customer"><?php
 						 echo plugin_lang_get( 'edit_team_customer' )?></a>
@@ -699,4 +727,4 @@ if( empty($_POST) || $_POST['back_button'] ) {
 	</table>
 </div>
 <?php }?>
-<?php html_page_bottom() ?>
+<?php layout_page_end();?>

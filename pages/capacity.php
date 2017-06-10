@@ -26,11 +26,29 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-	html_page_top(plugin_lang_get( 'manage_capacity_title' ));
+	layout_page_header(plugin_lang_get( 'manage_capacity_title' ));
+	layout_page_begin();
 ?>
 <br>
 <?php
 include (AGILEMANTIS_PLUGIN_URI . '/pages/footer_menu.php');
+
+$kj = array('action','back_button','addavailability','submit_button',
+	        'capacity','sprint','staycal','post_values','end',
+            'productBacklogName','fromSprintBacklog','fromTaskboard',
+            'fromDailyScrum','fromStatistics','fromProductBacklog');
+
+foreach ($kj as $yy) 
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+}
+
+$hinweis = null;
+$system = null;
+$year_end = 0;
+
+
+
 
 # add back button action
 if( $_POST['back_button'] ) {
@@ -266,7 +284,7 @@ if( $_POST['back_button'] ) {
 		type="hidden" name="fromProductBacklog"
 		value="<?php echo $_POST['fromProductBacklog']?>">
 	<div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td colspan="2"><b><?php echo plugin_lang_get( 'manage_capacity_title' )?></b></td>
 			</tr>
@@ -458,4 +476,4 @@ $system = "";
 	<br>
 </form>
 <?php }?>
-<?php html_page_bottom() ?>
+<?php layout_page_end(); ?>

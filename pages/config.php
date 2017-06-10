@@ -47,7 +47,8 @@
 	$t_locale_planned_work = 
 		lang_get_failsave_custom_field( 'PlannedWork' );
 	
-	html_page_top( plugin_lang_get( 'manage_settings_title' ) );
+	layout_page_header( plugin_lang_get( 'manage_settings_title' ) );
+	layout_page_begin();
 	
 	$disable_combobox_task_unit = "";
 	
@@ -57,6 +58,13 @@
 ?>
 <br>
 <?php
+    $kj = array('error','save');
+    foreach($kj as $yy)
+    {
+		$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';    	
+    }	
+    $system = '';
+
 	if( $_GET['error'] == 'workday_error' ) {
 		$system = 
 			plugin_lang_get( 'manage_settings_error_984100' );
@@ -88,6 +96,8 @@
 	}
 
 	include( AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php' );
+	layout_page_header(plugin_lang_get( 'edit_product_backlog_title' ));
+	layout_page_begin(); 
 
 	if( $_GET['save'] == 'success' ) {
 		echo '<br><center><span style="color:green; font-size:16px; font-weight:bold;">'.
@@ -121,7 +131,7 @@
 		'plugin_format_config_edit' );
 ?>
 	<div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td colspan="2">
 					<b>
@@ -499,7 +509,7 @@
 	<br>
 	<div id="custom_field_gen"></div>
 	<div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td>
 					<b>
@@ -782,4 +792,4 @@
 </center>
 <?php
 	}
- html_page_bottom() ?>
+ layout_page_end();?>
