@@ -26,7 +26,8 @@
 
 
 	
-	html_page_top( plugin_lang_get( 'delete_product_backlog_delete_button' ) );
+	layout_page_header( plugin_lang_get( 'delete_product_backlog_delete_button' ) );
+	layout_page_begin();
 	
 	# get product backlog information by id
 	$agilemantis_pb->id = (int) $_POST['product_backlog_id'];
@@ -48,4 +49,4 @@
 			</form>
 		<hr width="50%">
 	</div>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

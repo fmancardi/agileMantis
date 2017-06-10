@@ -84,7 +84,7 @@ if( $show_all_sprints == true ) {
 	</center>
 	<br>
 	<?php html_status_legend();?>
-	<?php html_page_bottom() ?>
+	<?php layout_page_end() ?>
 	<?php } else {?>
 <br>
 <center><span class="message_error"><?php echo $system?></span></center>

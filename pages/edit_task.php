@@ -26,7 +26,7 @@
 
 
 
-	html_page_top(plugin_lang_get( 'edit_task_title' )); 
+	layout_page_header(plugin_lang_get( 'edit_task_title' )); 
 ?>
 <br>
 <?php
@@ -936,4 +936,4 @@ if( $getSprint['status'] > 0 ) {
 	</div>
 	<?php }?>
 </form>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

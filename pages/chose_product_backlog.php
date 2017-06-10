@@ -25,7 +25,7 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-	html_page_top(plugin_lang_get( 'product_backlog_chose' ));
+	layout_page_header(plugin_lang_get( 'product_backlog_chose' ));
 	print_recently_visited();
 ?>
 <br>

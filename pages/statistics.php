@@ -197,4 +197,4 @@ if( $show_all_sprints == true ) {
 	</p>
 </div>
 <?php }?>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

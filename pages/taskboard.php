@@ -89,7 +89,7 @@
 	</center>
 <br>
 <?php html_status_legend();?>
-	<?php html_page_bottom() ?>
+	<?php layout_page_end() ?>
 	<?php } else {?>
 <br>
 <center>

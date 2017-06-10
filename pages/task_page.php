@@ -27,7 +27,8 @@
 
 if( $_GET['us_id'] > 0 ) {
 	
-	html_page_top( plugin_lang_get( 'edit_tasks_title' ) );
+	layout_page_header( plugin_lang_get( 'edit_tasks_title' ) );
+	layout_page_begin();
 	?>
 <br>
 <?php
@@ -643,5 +644,5 @@ if( $_GET['us_id'] > 0 ) {
 	require( 'bugnote_add_inc.php' );
 ?>
 <?php html_status_legend();?>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>
 <?php }?>

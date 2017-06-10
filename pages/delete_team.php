@@ -25,7 +25,8 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 	
-	html_page_top(plugin_lang_get( 'delete_team_title' ));
+	layout_page_header(plugin_lang_get( 'delete_team_title' ));
+	layout_page_begin();
 	
 	# get selected team
 	$agilemantis_team->id = (int) $_POST['team_id'];
@@ -46,4 +47,4 @@
 			</form>
 		<hr width="50%">
 	</div>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

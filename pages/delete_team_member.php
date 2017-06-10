@@ -25,7 +25,8 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 	
-	html_page_top(plugin_lang_get( 'remove_member_title' ));
+	layout_page_header(plugin_lang_get( 'remove_member_title' ));
+	layout_page_begin();
 	
 	# get real name by user name
 	$username = $agilemantis_team->getUserRealName($_POST['user_id']);
@@ -65,4 +66,4 @@
 			</form>
 		<hr width="50%">
 	</div>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

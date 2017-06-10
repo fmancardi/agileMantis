@@ -41,7 +41,7 @@ switch( $_GET['page'] ) {
 		break;
 }
 
-html_page_top( plugin_lang_get( 'sprint_backlog_chose_sprint' ) );
+layout_page_header( plugin_lang_get( 'sprint_backlog_chose_sprint' ) );
 print_recently_visited();
 
 ?>
@@ -231,5 +231,5 @@ print_recently_visited();
 </div>
 <br>
 <?php
-html_page_bottom();
+layout_page_end();
 ?>

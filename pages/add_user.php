@@ -91,7 +91,7 @@ if( $_POST['action'] == 'addUser' ) {
 	
 	header( $agilemantis_au->forwardReturnToPage( 'agileuser.php' ) );
 } else {
-	html_page_top( plugin_lang_get( 'manage_user_add_new_user' ) );
+	layout_page_header( plugin_lang_get( 'manage_user_add_new_user' ) );
 }
 ?>
 
@@ -187,4 +187,4 @@ if( $_POST['action'] == 'addUser' ) {
 	echo '<br><center><span class="message_error">'.
 			plugin_lang_get( 'info_error_921001' ).'</span></center>';
 	}?>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

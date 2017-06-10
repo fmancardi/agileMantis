@@ -25,7 +25,7 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-html_page_top( plugin_lang_get( 'assume_userstories_title' ) );
+layout_page_header( plugin_lang_get( 'assume_userstories_title' ) );
 
 # merge global $_GET / $_POST array
 $request = array_merge( $_POST, $_GET );
@@ -345,5 +345,5 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 		</table>
 	</div>
 <?php
-	html_page_bottom()
+	layout_page_end()
 ?>

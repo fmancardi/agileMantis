@@ -191,7 +191,7 @@ if( $page_name == 'statistics' ) {
 	$header_title = plugin_lang_get( 'statistics_title' );
 }
 ?>
-<?php html_page_top($header_title);?>
+<?php layout_page_header($header_title);?>
 <?php print_recently_visited();?>
 <?php if( $_GET['warning'] == 1 ) {
 	$warning = plugin_lang_get( 'sprint_backlog_error_100700' ).'<br>';?>

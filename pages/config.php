@@ -156,7 +156,7 @@
 					<?php echo plugin_lang_get( 'manage_settings_license_info' ) ?>
 				</td>
 				<td class="left">
-					<div class="applet-row">
+					<div class="oranget-row">
 					<?php
 						if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 							event_signal( 'EVENT_LOAD_SETTINGS',

@@ -25,7 +25,8 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-	html_page_top( plugin_lang_get( 'delete_project_title' ) );
+	layout_page_header( plugin_lang_get( 'delete_project_title' ) );
+	layout_page_begin();
 	
 	# get project name by id
 	$projectname = $agilemantis_project->getProjectName( $_POST['project_id'] );
@@ -55,4 +56,4 @@
 			</form>
 		<hr width="50%">
 	</div>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>

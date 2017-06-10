@@ -25,7 +25,8 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-html_page_top( plugin_lang_get( 'divide_userstories_title' ) );
+layout_page_header( plugin_lang_get( 'divide_userstories_title' ) );
+layout_page_begin();
 
 # merge global $_GET / $_POST Array
 $request = array_merge( $_GET, $_POST );
@@ -253,4 +254,4 @@ if( $request['action'] == 'edit' ) {
 		</table>
 	</div>
 	<?php }?>
-<?php html_page_bottom() ?>
+<?php layout_page_end() ?>
