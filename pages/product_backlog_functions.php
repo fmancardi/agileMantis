@@ -48,6 +48,24 @@ if( $teams == 0 && $_SESSION['AGILEMANTIS_ISMANTISUSER'] &&
 	$lock_productbacklog = true;
 }
 
+$kj = array('chose_product_backlog','submit','productBacklogName',
+			'action','show_only_us_without_storypoints',
+			'show_resolved_userstories','show_closed_userstories',
+			'show_only_userstories_without_sprint',
+			'show_only_project_userstories','show_project_target_version');
+
+foreach($kj as $yy)
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';  
+}
+
+$kj = array('productBacklogName');
+foreach($kj as $yy)
+{
+	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';  
+}
+
+
 if( $_POST['chose_product_backlog'] && $_POST['submit'] != "backlog" ) {
 	$show_all_backlogs = true;
 }

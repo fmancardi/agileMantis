@@ -38,7 +38,7 @@
 		include( AGILEMANTIS_PLUGIN_URI.'pages/product_backlog_stories.php' );
 		html_status_legend();
 	} else {
-		html_page_top( plugin_lang_get( 'product_backlog_chose' ) );
+		layout_page_header( plugin_lang_get( 'product_backlog_chose' ) );
 		echo '<br>
 			<center>
 				<span style="color:red; font-size:16px; font-weight:bold;">'.
@@ -49,5 +49,5 @@
 	if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 		event_signal( 'EVENT_LOAD_USERSTORY' );
 	}
-	html_page_bottom();
+	layout_page_end();
 ?>

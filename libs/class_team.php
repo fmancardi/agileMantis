@@ -482,6 +482,11 @@ class gadiv_team extends gadiv_commonlib {
 				GROUP BY user_id";
 		$t_params = array($user_id );
 		$user = $this->executeQuery( $t_sql, $t_params );
+		if( count($user) == 0)
+		{
+			$user = array();
+			$user[0]['teams'] = 0;
+		}	
 		return $user[0]['teams'];
 	}
 	
