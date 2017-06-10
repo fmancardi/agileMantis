@@ -1216,6 +1216,26 @@ class agileMantisPlugin extends MantisPlugin {
 			global $agilemantis_commonlib;
 			global $agilemantis_sprint;
 
+
+/*
+return array(    array(
+  'title' => 'My Link',
+  'access_level' => DEVELOPER,
+  'url' => 'my_link.php',
+  'icon' => 'fa-random'
+),
+    array(
+  'title' => 'My Link',
+  'access_level' => DEVELOPER,
+  'url' => 'my_link.php',
+  'icon' => 'fa-random'
+), array(
+  'title' => 'My Link2',
+  'access_level' => DEVELOPER,
+  'url' => 'my_link2.php',
+  'icon' => 'fa-shield'
+) );
+*/
 			$user = $agilemantis_commonlib->getAdditionalUserFields( auth_get_current_user_id() );
 
                if( count($user) == 0 )
@@ -1233,9 +1253,9 @@ class agileMantisPlugin extends MantisPlugin {
 					|| $user[0]['developer'] == 1
 					|| $user[0]['administrator'] == 1 ) {
 
-				$menu[2] =  '<a href="' .
-						plugin_page("product_backlog.php") .
-						'" class="agile_menu">Product Backlog</a>';
+                    $menu[] = array('title' => 'Product Backlog',
+                                    'url' => plugin_page("product_backlog.php"),
+                                    'icon' => 'fa-random');
 			}
 
 			# add sprint backlog or taskboard menu item
@@ -1243,15 +1263,17 @@ class agileMantisPlugin extends MantisPlugin {
 					|| $user[0]['developer'] == 1
 					|| $user[0]['administrator'] == 1 ) {
 
-					$menu[0] =  '<a href="' . plugin_page( "sprint_backlog.php" ) .
-						'" class="agile_menu">Sprint Backlog</a>';
-
+                    $menu[] = array('title' => 'Sprint Backlog',
+                                    'url' => plugin_page("sprint_backlog.php"),
+                                    'icon' => 'fa-shield');
 			}
 			
 			# add agileMantis menu item
 			if( current_user_is_administrator() || $user[0]['administrator'] == 1 ) {
-				$menu[3] =  '<a href="' . plugin_page( "info.php" ) .
-					'" class="agile_menu">agileMantis</a>';
+
+                    $menu[] = array('title' => 'agileMantis',
+                                    'url' => plugin_page("info.php"),
+                                    'icon' => 'fa-heartbeat');
 			}
 
 			return $menu;
