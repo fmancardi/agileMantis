@@ -44,10 +44,14 @@ switch( $_GET['page'] ) {
 layout_page_header( plugin_lang_get( 'sprint_backlog_chose_sprint' ) );
 print_recently_visited();
 
+$_GET['klickStatus'] = isset($_GET['klickStatus']) ? $_GET['klickStatus'] : 0; 
+$_POST['show_all_sprints'] = isset($_POST['show_all_sprints']) ? : 0;
+$_POST['disable_click'] = isset($_POST['disable_click']) ? : 0;
+
 ?>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="5"><b><?php echo $name?> - <?php 
 						echo plugin_lang_get( 'sprint_backlog_chose_sprint' )?></b></td>

@@ -25,10 +25,12 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 global $agilemantis_pb;
 
-$pb_id = $information[0]['id'];
+$pb_id = isset($information[0]) && isset($information[0]['id']) ? 
+         $information[0]['id'] : null;
+
 if( empty( $pb_id ) ) {
 	$pb = $agilemantis_pb->getProductBacklogByName( $product_backlog );
-	$pb_id = $pb[0]['id'];
+	$pb_id = isset($pb[0]) && isset($pb[0]['id']) ? $pb[0]['id'] : null;
 }
 $user_id_po = $agilemantis_pb->getUserIdOfPoByPbId( $pb_id );
 $logged_in_user_is_po_of_selected_pb = ($user_id_po == $user_id);
@@ -36,7 +38,7 @@ $logged_in_user_is_po_of_selected_pb = ($user_id_po == $user_id);
 ?>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="7"><b>Product Backlog</b>
 				<form action="<?php echo plugin_page("product_backlog.php")?>"
@@ -77,6 +79,10 @@ $logged_in_user_is_po_of_selected_pb = ($user_id_po == $user_id);
 	<?php
 	# get all sprint which work on a product backlog and get the latest out of it
 	$pb_info = $agilemantis_pb->getProductBacklogByName( $product_backlog );
+	if(!isset($pb_info[0]))
+	{
+		$pb_info[0] = array('id' => -1, 'description' => '');
+	}	
 	if( $agilemantis_pb->checkProductBacklogMoreOneTeam( $product_backlog ) ) {
 		$agilemantis_team->id = $agilemantis_pb->getTeamIdByBacklog( $pb_info[0]['id'] );
 		$team_info = $agilemantis_team->getSelectedTeam();

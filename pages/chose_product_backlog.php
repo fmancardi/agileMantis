@@ -30,7 +30,7 @@
 ?>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="5"><b><?php echo plugin_lang_get( 'product_backlog_chose' )?></b></td>
 		</tr>
@@ -47,6 +47,7 @@
 	$userTeams = $agilemantis_team->allTeamsByUser( $user_id );
 	$product_backlogs = $agilemantis_pb->getProductBacklogs();
 	
+	$user_teams = '';
 	if( $userTeams ) {
 		foreach( $userTeams as $key => $value ) {
 			$user_teams .= $value['team_id'] . ',';

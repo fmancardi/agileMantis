@@ -25,6 +25,8 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
+$system = null;
+
 # get all user stories from a selected product backlog
 $userstories = $agilemantis_pb->getUserStoriesByProductBacklogName( $product_backlog );
 if( config_get( 'current_user_product_backlog_filter_direction', 

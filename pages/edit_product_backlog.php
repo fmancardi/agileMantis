@@ -44,7 +44,7 @@
     $kj = array('pbid');
     foreach($kj as $yy)
     {
-    	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';
+    	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : -1;
     }	
 
     $t_project_id = -1;
@@ -61,7 +61,7 @@
 		header("Location: ".plugin_page($fromPage));
 	} else {
 		
-		# get product backlog id
+	# get product backlog id
 	if( $_POST['edit'] ) {
 		$agilemantis_pb->id = implode( '', array_flip( $_POST['edit'] ) );
 	} else {

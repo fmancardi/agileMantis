@@ -29,6 +29,11 @@
 	# include additional product backlog functions
 	include( AGILEMANTIS_PLUGIN_URI.'pages/product_backlog_functions.php' );
 	
+
+	echo __FILE__ . '<br>';
+var_dump($_POST);
+
+//die();
 	# show chose product backlog page or a product backlog directly
 	if( $show_all_backlogs == true && $lock_productbacklog == false ) {
 		include( AGILEMANTIS_PLUGIN_URI.'pages/chose_product_backlog.php' );
@@ -36,7 +41,7 @@
 		include( AGILEMANTIS_PLUGIN_URI.'pages/product_backlog_header.php' );
 		include( AGILEMANTIS_PLUGIN_URI.'pages/product_backlog_actions.php' );
 		include( AGILEMANTIS_PLUGIN_URI.'pages/product_backlog_stories.php' );
-		html_status_legend();
+		//html_status_legend();
 	} else {
 		layout_page_header( plugin_lang_get( 'product_backlog_chose' ) );
 		echo '<br>

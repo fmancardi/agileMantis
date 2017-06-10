@@ -360,7 +360,12 @@ class gadiv_commonlib {
 					FROM gadiv_teams 
 					WHERE pb_id=" . db_param( 0 );
 					//GROUP BY pb_id";
-		$t_params = array( $t_pb_info[0]['id'] );
+        $t_params = array(0);
+		if(isset($t_pb_info[0]) && isset($t_pb_info[0]['id']))
+		{
+			$t_params = array( $t_pb_info[0]['id'] );
+		}			
+
 		$t_result = $this->executeQuery( $t_sql, $t_params );
 		if( $t_result[0]['number_of_teams'] === 1 ) {
 			return true;

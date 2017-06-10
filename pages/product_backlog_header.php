@@ -29,6 +29,12 @@ layout_page_header( plugin_lang_get( 'product_backlog_title' ) );
 layout_page_begin();
 print_recently_visited();
 
+$t_pb_id = null;
+$t_team_id = null;
+$sprint_in_same_time = null;
+$developer = null;
+$scrumMaster = null;
+
 # merge global $_POST / $_GET array
 $request = array_merge( $_POST, $_GET );
 
@@ -75,7 +81,10 @@ if( $_POST['action'] == 'save_values' ) {
 # get developer and scrum-master roles
 $developer = $agilemantis_team->getProductBacklogTeamRole( $product_backlog, $user_id, 3 );
 
+//die();
+
 # set team id, product backlog id for a developer
+$one_backlog_more_teams = null;
 if( !empty( $developer ) ) {
 	$one_backlog_more_teams = false;
 	foreach( $developer as $num => $row ) {
@@ -104,8 +113,14 @@ if( $one_backlog_more_teams == false ) {
 		}
 	}
 }
+echo __LINE__;
+var_dump(array($product_backlog, $user_id));
+var_dump($developer);
+var_dump($scrumMaster);
+
 
 # check if product backlog has running sprints
+$no_sprint_found = null;
 $sprints = $agilemantis_pb->productBacklogHasRunningSprint( $t_pb_id );
 if( !empty( $sprints ) ) {
 	$no_sprint_found = true;
@@ -136,11 +151,12 @@ if( $one_backlog_more_teams || (empty( $developer ) && empty( $scrumMaster )) ) 
 } else {
 	$disable_button = '';
 }
-
+echo 'dd:' . $disable_button . 'zz';
+die();
 ?>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="7"><b><?php echo plugin_lang_get( 'product_backlog_title' )?></b>
 				<form action="<?php echo plugin_page("availability.php")?>"

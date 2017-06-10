@@ -685,7 +685,8 @@ class gadiv_sprint extends gadiv_commonlib {
 				GROUP BY user_id";
 		$t_params = array( $user_id );
 		$user = $this->executeQuery( $t_sql, $t_params );
-		return $user[0]['sprints'];
+
+		return isset($user[0]) && isset($user[0]['sprints']) ? $user[0]['sprints'] : null;
 	}
 	
 	# check if all tasks and user stories are resolved or closed in a sprint

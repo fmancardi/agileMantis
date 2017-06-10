@@ -109,9 +109,11 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		$pbs = substr( $pbs, 0, -1 );
 		
 		$this->getAdditionalProjectFields();
-		custom_field_update( $this->pb, 
-			array( 'name' => 'ProductBacklog', 'possible_values' => $pbs ) );
-		
+
+        $cfID = custom_field_get_id_from_name('ProductBacklog');
+        $cfDef = custom_field_get_definition($cfID);
+        $cfDef['possible_values'] = $pbs;
+		custom_field_update( $this->pb, $cfDef);
 		return true;
 	}
 
@@ -195,6 +197,7 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		
 		$result = $this->executeQuery( "SELECT * FROM gadiv_productbacklogs ORDER BY name ASC" );
 		
+		$pbs = '';
 		foreach( $result as $num => $row ) {
 			$pbs .= $row['name'] . '|';
 		}
@@ -426,6 +429,7 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		$t_mantis_category_table = db_get_table( 'mantis_category_table' );
 		
 		$this->getAdditionalProjectFields();
+		$orderby = '';
 		
 		$t_sql = "SELECT
 				a.id AS id, a.project_id AS project_id, a.summary AS summary, a.status AS status,
@@ -676,7 +680,8 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		
 		$t_params = array( $pb_id, $ROLE_PRODUCT_OWNER );
 		$t_result = $this->executeQuery( $t_sql, $t_params );
-		return $t_result[0]['user_id'];
+
+		return isset($t_result[0]) && isset($t_result[0]['user_id']) ? $t_result[0]['user_id'] : null;
 	}
 }
 ?>

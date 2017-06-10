@@ -56,15 +56,19 @@ $kj = array('chose_product_backlog','submit','productBacklogName',
 
 foreach($kj as $yy)
 {
-	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';  
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : null;  
 }
 
 $kj = array('productBacklogName');
 foreach($kj as $yy)
 {
-	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';  
+	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : null;	  
 }
 
+if(is_null($_GET['productBacklogName']) && !is_null($_POST['productBacklogName']))
+{
+	$_GET['productBacklogName'] = $_POST['productBacklogName'];
+}	
 
 if( $_POST['chose_product_backlog'] && $_POST['submit'] != "backlog" ) {
 	$show_all_backlogs = true;
