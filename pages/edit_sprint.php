@@ -39,7 +39,7 @@ $kj = array('action','back_button','product_backlog_id','id','name',
 	        'change_description','status','save_sprint','old_end_date',
 	        'sprint_id','end','edit','fromProductBacklog','productBacklogName',
 	        'fromSprintBacklog','fromTaskboard','fromDailyScrum',
-	        'fromStatistics');
+	        'fromStatistics','old_start_date');
 
 foreach ($kj as $yy) 
 {
@@ -435,6 +435,9 @@ if( !$s['end'] ) {
 			}
 			
 			$teamdata = $agilemantis_team->getCompleteTeams();
+			echo __LINE__;
+			var_dump($teamdata);
+
 			$productBacklog = array(0 => null);
 			if( is_array($teamdata) )
 			{

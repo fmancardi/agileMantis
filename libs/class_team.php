@@ -148,12 +148,19 @@ class gadiv_team extends gadiv_commonlib {
 		}
 	}
 	
-	#	with the help of this function only complete Teams will be returned. Firstly all Team are loaded from the database and secondly
-	#	all team members are loaded from those teams. Every Team will be checked, if it has a Product Owner, a Scrum Master and at least
-	#	one developer. If the team is "complete" the function will return a filled array and if the team is not complete it will
-	#	return an empty one.
+	#	with the help of this function only complete Teams will be returned. 
+	#   Firstly all Team are loaded from the database and secondly
+	#	all team members are loaded from those teams. Every Team will be checked, 
+	#   if it has a Product Owner, a Scrum Master and at least
+	#	one developer. If the team is "complete" the function will return a 
+	#   filled array and if the team is not complete it will return an empty one.
+	#
 	function getCompleteTeams() {
 		$teamdata = $this->getTeams();
+
+        var_dump($teamdata);
+
+		$teams = null;
 		foreach( $teamdata as $num => $row ) {
 			$t_sql = "SELECT count(role) AS product_owner 
 					FROM gadiv_rel_team_user 
@@ -161,6 +168,8 @@ class gadiv_team extends gadiv_commonlib {
 					AND role LIKE '%1%'" . "
 					GROUP BY team_id";
 			$t_params = array($row['id'] );
+			var_dump($t_params);
+			
 			$prowner = $this->executeQuery( $t_sql, $t_params );
 			
 			$t_sql = "SELECT count(role) AS scrum_master 
@@ -325,7 +334,9 @@ class gadiv_team extends gadiv_commonlib {
 				GROUP BY user_id";
 		$t_params = array($user_id,$this->getNormalDateFormat($date_start),$this->getNormalDateFormat($date_end));
 		$result = $this->executeQuery( $t_sql, $t_params );
-		if( $result[0]['total_cap'] != "" ) {
+
+		$doIt = isset($result[0]) && isset($result[0]['total_cap']);
+		if( $doIt && $result[0]['total_cap'] != "" ) {
 			return $result;
 		}
 	}
@@ -444,7 +455,9 @@ class gadiv_team extends gadiv_commonlib {
 				GROUP BY name";
 		$t_params = array($team_id );
 		$get = $this->executeQuery( $t_sql, $t_params );
-		if( $get[0]['currentsprint'] > 0 && !is_null( $get[0]['currentsprint'] ) ) {
+
+		$doIt = isset($get[0]) && isset($get[0]['currentsprint']);
+		if( $doIt && $get[0]['currentsprint'] > 0 && !is_null( $get[0]['currentsprint'] ) ) {
 			$t_sql = "SELECT * 
 						FROM $t_mantis_custom_field_string_table 
 						WHERE value=" . db_param( 0 ) . " 

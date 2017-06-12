@@ -36,7 +36,7 @@ $kj = array('action','back_button','addavailability','submit_button',
 
 foreach ($kj as $yy) 
 {
-	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : null;
 }
 
 $system = null;

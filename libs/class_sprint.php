@@ -101,13 +101,6 @@ class gadiv_sprint extends gadiv_commonlib {
 							$_SESSION['order_end'] = 0;
 							$_SESSION['order_id'] = 1;
 						}
-// 						$diff_now_end = "CEIL((UNIX_TIMESTAMP(end) - " . time() . ") / 86400)";
-// 						$diff_start_end = "CEIL((UNIX_TIMESTAMP(end) - UNIX_TIMESTAMP(start)) / 86400)";
-						
-// 						$addsql = ",
-// 							IF(($diff_now_end) < ($diff_start_end),
-// 								($diff_now_end),
-// 								($diff_start_end)) AS restaufwand";
 
 						if (db_is_mssql()) {
 							$addsql = ", (CASE WHEN (DATEDIFF(day,GETDATE(),enddate) > DATEDIFF(day,start,enddate)) THEN DATEDIFF(day,start,enddate) ELSE  DATEDIFF(day,GETDATE(), enddate) END) as restaufwand";
@@ -550,6 +543,7 @@ class gadiv_sprint extends gadiv_commonlib {
 	function sprintnameisunique() {
 		$t_params = array( $_POST['name'] );
 		
+		$addsql = '';
 		if( $this->sprint_id > 0 ) {
 			$addsql = " AND id != " . db_param( 1 );
 			$t_params[] = $this->sprint_id;
@@ -561,7 +555,8 @@ class gadiv_sprint extends gadiv_commonlib {
 					GROUP BY name";
 		$result = $this->executeQuery( $t_sql, $t_params );
 		
-		if( $result[0]['sprints'] > 0 ) {
+		$doIt = isset($result[0]) && isset($result[0]['sprints']);
+		if( $doIt && $result[0]['sprints'] > 0 ) {
 			return false;
 		}
 		return true;
@@ -586,7 +581,8 @@ class gadiv_sprint extends gadiv_commonlib {
 		$t_params[] = $this->sprint_id;
 
 		$result = $this->executeQuery( $t_sql, $t_params );
-		if( $result[0]['name'] ) {
+		$doIt = isset($result[0]) && isset($result[0]['name']);
+		if( $doIt && $result[0]['name'] ) {
 			$retVal = true;
 		}
 		
@@ -904,6 +900,7 @@ class gadiv_sprint extends gadiv_commonlib {
 	function getLatestSprints( $team_id, $amountOfSprints = 0, $sprintName = "", $previous = "" ) {
 		
 		$top="";
+		$addSql ="";
 		if (db_is_mysql()) {
 			if( $amountOfSprints != "" ) {
 				$addSql = " ORDER BY id DESC LIMIT 0, " . ( int ) $amountOfSprints;
