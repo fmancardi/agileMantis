@@ -205,8 +205,11 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		$pbs = substr( $pbs, 0, -1 );
 		
 		$this->getAdditionalProjectFields();
-		custom_field_update( $this->pb, 
-			array( 'name' => 'ProductBacklog', 'possible_values' => $pbs ) );
+
+		$cfID = custom_field_get_id_from_name('ProductBacklog');
+        $cfDef = custom_field_get_definition($cfID);
+        $cfDef['possible_values'] = $pbs;
+		custom_field_update( $this->pb, $cfDef);
 	}
 	
 	# check if product backlog has still user stories in it

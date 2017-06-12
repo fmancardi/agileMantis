@@ -469,6 +469,7 @@ if( empty($_POST) || $_POST['back_button'] ) {
 			<td>
 				<?php
 				# if the team is not working on a sprint, all team members can be deleted
+				$do_not_delete_last_member = false;
 				if( $agilemantis_team->hasSprints( $agilemantis_team->id ) > 0 ) {
 					$do_not_delete_last_member = true;
 					if( $do_not_delete_last_member ) {

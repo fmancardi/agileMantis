@@ -55,7 +55,7 @@ for( $x = 0; $x <= $amount_of_month; $x++ ) {
 		$end_tag = $end;
 	}
 	
-	if( $x == $amount_of_months && $amount_of_month == 0 ) {
+	if( $x == $amount_of_month && $amount_of_month == 0 ) {
 		$start_tag = $start;
 		$end_tag = $end;
 	}

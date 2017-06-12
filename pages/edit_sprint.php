@@ -277,7 +277,8 @@ if( $_POST['edit'] ) {
 }
 
 $s = array('start' => null, 'end' => null, 'id' => -1, 'team_id' => -1,
-	       'status' => false,'name' => null, 'description' => null);
+	       'status' => false,'name' => null, 'description' => null,
+	       'daily_scrum' => null);
 
 if( $agilemantis_sprint->sprint_id > 0 ) {
 	$s = $agilemantis_sprint->getSprintByName();
