@@ -35,31 +35,38 @@
 
 // Redirect to backlog list view if invalid or back_button
 $kj = array('action','back_button','product_backlog_id','id','name',
-	        'start_date','end_date','team_id','description','daily_scrum',
+	        'start_date','end_date','team_id','description',
 	        'change_description','status','save_sprint','old_end_date',
 	        'sprint_id','end','edit','fromProductBacklog','productBacklogName',
 	        'fromSprintBacklog','fromTaskboard','fromDailyScrum',
-	        'fromStatistics','old_start_date');
+	        'fromStatistics','old_start_date','negative');
 
 foreach ($kj as $yy) 
 {
-	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : null;
 }
+
 
 $kj = array('sprint_id','end','edit');
 
 foreach ($kj as $yy) 
 {
-	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : '';
+	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : null;
 }
 
+$_POST['id'] = is_null($_POST['id']) ? 0 : $_POST['id'];
+$_POST['sprint_id'] = is_null($_POST['sprint_id']) ? 0 : $_POST['sprint_id'];
+if( is_null($_GET['sprint_id']) )
+{
+  $_GET['sprint_id'] = $_POST['sprint_id'];	
+}
 
 
 if( empty($_POST) || $_POST['back_button'] ) {
 	header( $agilemantis_sprint->forwardReturnToPage( "sprints.php" ) );
 }
 
-$system = null;
+$system = '';
 $disabled = '';
 $disables = '';
 
@@ -67,6 +74,7 @@ $disables = '';
 $current_date = mktime( 0, 0, 0, date( 'm' ), date( 'd' ), date( 'Y' ) );
 
 # collecting sprint information 
+
 $agilemantis_sprint->pb_id = ( int ) $_POST['product_backlog_id'];
 $agilemantis_sprint->sprint_id = $_POST['id'];
 $agilemantis_sprint->name = $_POST['name'];
@@ -74,7 +82,7 @@ $agilemantis_sprint->description = $_POST['description'];
 $agilemantis_sprint->team_id = $_POST['team_id'];
 $agilemantis_sprint->start = str_replace( ',', '.', $_POST['start_date'] );
 $agilemantis_sprint->end = str_replace( ',', '.', $_POST['end_date'] );
-$agilemantis_sprint->daily_scrum = ($_POST['daily_scrum'] ? 1 : 0);
+$agilemantis_sprint->daily_scrum = isset($_POST['daily_scrum']) ? 1 : 0;
 
 # only change description when sprint is closed
 if( $_POST['change_description'] && $_POST['status'] == 2 ) {
@@ -83,6 +91,7 @@ if( $_POST['change_description'] && $_POST['status'] == 2 ) {
 }
 
 if( $_POST['action'] == 'edit' && $_POST['save_sprint'] ) {
+
 	# check sprint name 
 	if( empty( $agilemantis_sprint->name ) ) {
 		$system = plugin_lang_get( 'edit_sprints_error_922500' );
@@ -142,7 +151,7 @@ if( $_POST['action'] == 'edit' && $_POST['save_sprint'] ) {
 			}
 		}
 	}
-	
+
 	$t_start = strtotime( $agilemantis_sprint->start );
 	$t_old_start = strtotime( $_POST['old_start_date'] );
 	
@@ -235,6 +244,7 @@ if( $_POST['action'] == 'edit' && $_POST['save_sprint'] ) {
 	
 	$agilemantis_sprint->start = date( 'Y-m-d', $t_start );
 	$agilemantis_sprint->end = date( 'Y-m-d', $t_end );
+
 	
 	# check if this sprints overlaps with another sprint of the team
 	if( $agilemantis_sprint->isSprintOverlapping() && $system == "" ) {
@@ -246,9 +256,8 @@ if( $_POST['action'] == 'edit' && $_POST['save_sprint'] ) {
 		$t_old_sprint = $agilemantis_sprint->getSprintByName();
 
 		$agilemantis_sprint->editSprint();
-		
 
-		if ( !empty($t_old_sprint) ) {
+		if ( !is_null($t_old_sprint) ) {
 			$agilemantis_sprint->updateSprintCustomFieldStrings(
 						$t_old_sprint['name'], $agilemantis_sprint->name );
 		}		
@@ -276,9 +285,9 @@ if( $_POST['edit'] ) {
 	$agilemantis_sprint->sprint_id = implode( '', array_flip( $_POST['edit'] ) );
 }
 
-$s = array('start' => null, 'end' => null, 'id' => -1, 'team_id' => -1,
+$s = array('start' => null, 'end' => null, 'id' => 0, 'team_id' => -1,
 	       'status' => false,'name' => null, 'description' => null,
-	       'daily_scrum' => null);
+	       'daily_scrum' => 0);
 
 if( $agilemantis_sprint->sprint_id > 0 ) {
 	$s = $agilemantis_sprint->getSprintByName();
@@ -339,7 +348,7 @@ if( !$s['end'] ) {
 				<td class="left" width="70%"><input type="text" size="105"
 					maxlength="128" name="name"
 					value="<?php 
-						if( $s['id'] ) { 
+						if( $s['id'] > 0 ) { 
 							echo $s['name']; 
 						} else { 
 							echo $_POST['name'];
@@ -423,48 +432,52 @@ if( !$s['end'] ) {
 			</tr>
 			<tr <?php echo helper_alternate_class() ?>>
 				<td class="category">*Team</td>
-				<td class="left"><select name="team_id" <?php echo $disables?>
+				<td class="left"><select name="team_id" id="team_id" 
+				    <?php echo $disables?>
 					<?php if( $_POST['fromProductBacklog'] ) { ?> disabled <?php }?>
-					onChange="this.form.submit();">
+					>
 						<option><?php echo plugin_lang_get( 'common_chose' )?></option>
 			<?php
-			if( $s['id'] && $_POST['team_id'] == 0 ) {
+			if( $s['id'] > 0 && $_POST['team_id'] == 0 ) {
 				$team_id = $s['team_id'];
 			} else {
 				$team_id = $_POST['team_id'];
 			}
 			
 			$teamdata = $agilemantis_team->getCompleteTeams();
-			echo __LINE__;
-			var_dump($teamdata);
 
 			$productBacklog = array(0 => null);
+			$t = array();
+			$t[0]['daily_scrum'] = 0;
+
 			if( is_array($teamdata) )
 			{
 				foreach( $teamdata as $num => $row ) {
 					$teamSelected = '';
 					if( $row['id'] == $team_id ) {
+
 						$teamSelected = 'selected';
-						$selectedProductBacklog = $row['product_backlog'];
-						$selectedTeam = $row['id'];
+						$selectedProductBacklog = intval($row['product_backlog']);
+						$selectedTeam = intval($row['id']);
 						
 						$agilemantis_team->id = $selectedProductBacklog;
 						$productBacklog = $agilemantis_team->getSelectedProductBacklog();
+						
 						$agilemantis_team->id = $selectedTeam;
 						$t = $agilemantis_team->getSelectedTeam();
 					}
-					
+
 					?><option value="<?php echo $row['id']?>"
 								<?php echo $teamSelected?>><?php echo $row['name']?></option><?php
 				}
 			}	
 			?>
 		</select>
-			
+
 			</tr>
 	<?php if(plugin_config_get('gadiv_daily_scrum') == 1){?>
 	<tr <?php echo helper_alternate_class() ?>>
-				<td class="category">Daily Scrum Meeting mit Taskboard</td>
+				<td class="category">Daily Scrum Meeting with Taskboard</td>
 				<td class="left"><input type="checkbox" name="daily_scrum"
 					<?php if( plugin_config_get('gadiv_daily_scrum') == 0 || $s['status'] == 2 ) {?>
 					disabled <?php }?>
@@ -476,19 +489,23 @@ if( !$s['end'] ) {
 	<?php if( $disables == 'disabled' || $_POST['fromProductBacklog'] ) { ?>
 		<input type="hidden" name="team_id" value="<?php echo $team_id?>">
 	<?php }?>
-	<?php if( !$productBacklog[0]['name'] ) { ?>
+	<?php if( is_null($productBacklog[0]['name']) ) { ?>
 		<input type="hidden" name="negative" value="no_save">
 	<?php }?>
 	<?php if( $agilemantis_team->id > 0 ) {?>
 	<tr <?php echo helper_alternate_class() ?>>
 				<td class="category">Product Backlog</td>
 				<td class="left">
-			<?php if( !$productBacklog[0]['name'] ) { ?>
+			<?php if( is_null($productBacklog[0]['name']) ) { ?>
 				<input type="hidden" name="negative" value="no_save">
 			<?php }?>
 			<?php echo string_display_line_links($productBacklog[0]['name'])?>
 			<input type="hidden" name="product_backlog_id"
 					value="<?php echo $productBacklog[0]['id']?>">
+
+			<input type="hidden" name="productBacklogName"
+					value="<?php echo $productBacklog[0]['name']?>">
+
 				</td>
 			</tr>
 	<?php }?>
@@ -512,3 +529,6 @@ if( !$s['end'] ) {
 </form>
 <div style="clear: both"></div>
 <?php layout_page_end(); ?>
+<?php 
+echo '<script src="' . AGILEMANTIS_PLUGIN_URL . 'js/edit_sprint.js"></script>';
+?>

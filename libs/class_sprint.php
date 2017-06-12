@@ -326,8 +326,17 @@ class gadiv_sprint extends gadiv_commonlib {
 		 FROM gadiv_sprints WHERE id=" . db_param( 0 );
 			$t_params = array( $this->sprint_id );
 			$sprint = $this->executeQuery( $t_sql, $t_params );
-			$sprint[0]['start'] = substr($sprint[0]['start'], 0, 10);
-			$sprint[0]['end'] = substr($sprint[0]['end'], 0, 10);
+			if(isset($sprint[0]) && isset($sprint[0]['start']) && 
+			   isset($sprint[0]['end']))
+			{
+				$sprint[0]['start'] = substr($sprint[0]['start'], 0, 10);
+				$sprint[0]['end'] = substr($sprint[0]['end'], 0, 10);
+			}
+			else
+			{
+				$sprint = array();
+				$sprint[0] = null;
+			}	
 			return $sprint[0];
 		}
 	}
@@ -335,6 +344,7 @@ class gadiv_sprint extends gadiv_commonlib {
 	# add new sprint
 	function newSprint() {
 		
+		$spr = '';
 		if (db_is_mssql()) {
 			
 			$t_sql = "INSERT INTO gadiv_sprints (team_id,pb_id,name,description,status,daily_scrum,
@@ -407,13 +417,21 @@ class gadiv_sprint extends gadiv_commonlib {
 		$spr = substr( $spr, 0, -1 );
 		
 		$this->getAdditionalProjectFields();
-		custom_field_update( $this->spr, array( 'name' => 'Sprint', 'possible_values' => $spr ) );
-		
+        $cfID = custom_field_get_id_from_name('Sprint');
+        $cfDef = custom_field_get_definition($cfID);
+        $cfDef['possible_values'] = $spr;
+		custom_field_update( $this->spr, $cfDef);
+
 		return $this->sprint_id;
 	}
 	
 	# save / update sprint information
 	function editSprint() {
+
+        echo '<pre>';
+		var_dump($this);
+		echo '</pre>';
+
 		if( $this->sprint_id == 0 ) {
 			$this->sprint_id = $this->newSprint();
 		}
@@ -448,6 +466,8 @@ class gadiv_sprint extends gadiv_commonlib {
 												unit_planned_task,
 												workday_length
 		 FROM gadiv_sprints ORDER BY name ASC" );
+		
+		$t_sprints = '';
 		if( !empty( $result ) ) {
 			foreach( $result as $num => $row ) {
 				$t_sprints .= $row['name'] . '|';
@@ -456,8 +476,11 @@ class gadiv_sprint extends gadiv_commonlib {
 		$t_sprints = substr( $t_sprints, 0, -1 );
 		
 		$this->getAdditionalProjectFields();
-		custom_field_update( $this->spr, 
-				array( 'name' => 'Sprint', 'possible_values' => $t_sprints ) );
+        $cfID = custom_field_get_id_from_name('Sprint');
+        $cfDef = custom_field_get_definition($cfID);
+        $cfDef['possible_values'] = $t_sprints;
+		custom_field_update( $this->spr, $cfDef);
+
 	}
 	
 	# delete selected sprint information
@@ -483,6 +506,7 @@ class gadiv_sprint extends gadiv_commonlib {
 												workday_length
 		 FROM gadiv_sprints ORDER BY name ASC" );
 		
+		$spr = '';
 		foreach( $result as $num => $row ) {
 			if( $row['status'] != 2 ) {
 				$spr .= $row['name'] . '|';
@@ -492,7 +516,12 @@ class gadiv_sprint extends gadiv_commonlib {
 		$spr = substr( $spr, 0, -1 );
 		
 		$this->getAdditionalProjectFields();
-		custom_field_update( $this->spr, array( 'name' => 'Sprint', 'possible_values' => $spr ) );
+
+		$cfID = custom_field_get_id_from_name('Sprint');
+        $cfDef = custom_field_get_definition($cfID);
+        $cfDef['possible_values'] = $spr;
+		custom_field_update( $this->spr, $cfDef);
+
 	}
 	
 	# change sprint status by sprint id
@@ -528,8 +557,11 @@ class gadiv_sprint extends gadiv_commonlib {
 			$spr = substr( $spr, 0, -1 );
 			
 			$this->getAdditionalProjectFields();
-			custom_field_update( $this->spr, 
-				array( 'name' => 'Sprint', 'possible_values' => $spr ) );
+
+			$cfID = custom_field_get_id_from_name('Sprint');
+            $cfDef = custom_field_get_definition($cfID);
+            $cfDef['possible_values'] = $spr;
+		    custom_field_update( $this->spr, $cfDef);
 		}
 		
 		if( $ergebnis == true ) {
@@ -632,7 +664,9 @@ class gadiv_sprint extends gadiv_commonlib {
 				GROUP BY field_id";
 		$t_params = array( $name, $this->spr );
 		$result = $this->executeQuery( $t_sql, $t_params );
-		if( $result[0]['count_userstories'] > 0 ) {
+
+		$doIt = isset($result[0]) && isset($result[0]['count_userstories']);
+		if( $doIt && $result[0]['count_userstories'] > 0 ) {
 			return true;
 		} else {
 			return false;
