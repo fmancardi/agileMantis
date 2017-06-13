@@ -48,8 +48,6 @@
 		lang_get_failsave_custom_field( 'PlannedWork' );
 	
 	layout_page_header( plugin_lang_get( 'manage_settings_title' ) );
-	layout_page_begin();
-	
 	$disable_combobox_task_unit = "";
 	
 	# checks if the current user is administrator oder agileMantis administrator

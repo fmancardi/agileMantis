@@ -187,6 +187,7 @@ class gadiv_sprint extends gadiv_commonlib {
 		
 		$this->getAdditionalProjectFields();
 		
+		$addsql = "";
 		if( $show_only_open_userstories ) {
 			$addsql = ' AND bt.status < 80';
 		}
@@ -633,7 +634,8 @@ class gadiv_sprint extends gadiv_commonlib {
 		$t_params = array( $team_id, $sprint_id );
 		$result = $this->executeQuery( $t_sql, $t_params );
 		
-		if( $result[0]['amount'] > 0 ) {
+		$doIt = isset($result[0]) && isset($result[0]['amount']);
+		if( $doIt && $result[0]['amount'] > 0 ) {
 			return false;
 		} else {
 			return true;

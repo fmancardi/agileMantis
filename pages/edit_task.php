@@ -705,7 +705,7 @@ if( $getSprint['status'] > 0 ) {
 		value="<?php echo $task['planned_capacity'] ?>">
 <?php } ?>
 <div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td class="form-title" colspan="3">
 			<?php echo plugin_lang_get( 'edit_task_title' )?>
@@ -857,7 +857,7 @@ if( $getSprint['status'] > 0 ) {
 	<?php if($task['id'] > 0 ) { ?>
 	<br>
 	<div class="table-container">
-		<table align="center" class="width75" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td colspan="2"><b><?php echo plugin_lang_get( 'edit_task_log' )?></b>
 				</td>

@@ -24,6 +24,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
+$hinweis_rest_capacity = '';
+$warning = '';
+$system = "";
+$planned_capacity = '';
+$hinweis = '';
+$no_sprints = false;
+$gesamt_storypoints = 0;
+$disable_button = '';
+$span_left = '';
+$span_right = '';
+$disable_confirm_button = '';
 
 $_GET['page'] = str_replace( 'agileMantis/', '', $_GET['page'] );
 $page_name = str_replace( '.php', '', $_GET['page'] );
@@ -190,8 +201,18 @@ if( $page_name == 'daily_scrum_meeting' ) {
 if( $page_name == 'statistics' ) {
 	$header_title = plugin_lang_get( 'statistics_title' );
 }
+
+$kj = array('warning');
+foreach($kj as $yy)
+{
+	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : null; 
+}	
 ?>
-<?php layout_page_header($header_title);?>
+<?php 
+layout_page_header($header_title);
+layout_page_begin();
+?>
+
 <?php print_recently_visited();?>
 <?php if( $_GET['warning'] == 1 ) {
 	$warning = plugin_lang_get( 'sprint_backlog_error_100700' ).'<br>';?>
