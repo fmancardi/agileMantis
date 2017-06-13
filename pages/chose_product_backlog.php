@@ -26,6 +26,7 @@
 
 
 	layout_page_header(plugin_lang_get( 'product_backlog_chose' ));
+	layout_page_begin();
 	print_recently_visited();
 ?>
 <br>
