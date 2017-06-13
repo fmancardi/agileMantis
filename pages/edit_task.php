@@ -30,13 +30,14 @@
 ?>
 <br>
 <?php
+$system = '';
 
 # get task and user story id
-if( $_GET['us_id'] ) {
+if( isset($_GET['us_id']) && $_GET['us_id'] ) {
 	$agilemantis_tasks->us_id = ( int ) $_GET['us_id'];
 }
-if( $_POST['us_id'] ) {
-	$agilemantis_tasks->us_id = $_POST['us_id'];
+if( isset($_POST['us_id']) && $_POST['us_id'] ) {
+	$agilemantis_tasks->us_id = intval($_POST['us_id']);
 }
 
 # get all task and user story information
@@ -52,7 +53,7 @@ $date = date( 'Y' ) . '-' . date( 'm' ) . '-' . date( 'd' );
 $user_id = auth_get_current_user_id();
 
 # delete task action
-if( $_POST['delete'] ) {
+if( isset($_POST['delete']) && $_POST['delete'] ) {
 	$user_id = auth_get_current_user_id();
 	$agilemantis_tasks->id = $_POST['id'];
 	$agilemantis_tasks->deleteTask();
@@ -73,7 +74,7 @@ if( $_POST['delete'] ) {
 } else {
 	
 	# divide task action
-	if( $_POST['divide_task'] == plugin_lang_get( 'button_assume' ) ) {
+	if( isset($_POST['divide_task']) && ($_POST['divide_task'] == plugin_lang_get( 'button_assume' )) ) {
 		
 		# common
 		$agilemantis_tasks->us_id = $_POST['us_id'];
@@ -115,7 +116,7 @@ if( $_POST['delete'] ) {
 	} else {
 		
 		# back button action
-		if( $_POST['back_button'] ) {
+		if( isset($_POST['back_button']) && $_POST['back_button'] ) {
 			if( $_POST['fromSprintBacklog'] == 1 && $_POST['fromTaskPage'] == 1 ) {
 				$additional = '&fromSprintBacklog=1';
 			}
@@ -124,7 +125,7 @@ if( $_POST['delete'] ) {
 		} else {
 			
 			# save / update task information
-			if( $_POST['action'] == "editTask" ) {
+			if( isset($_POST['action']) && $_POST['action'] == "editTask" ) {
 				
 				# make different capacity checks
 				if( $_POST['rest_capacity'] < 0 ) {
@@ -159,9 +160,23 @@ if( $_POST['delete'] ) {
 				$agilemantis_tasks->description = $_POST['description'];
 				$agilemantis_tasks->performed_capacity = sprintf( "%.2f", 
 					str_replace( ',', '.', $_POST['performed_capacity'] ) );
-				$agilemantis_tasks->rest_capacity = sprintf( "%.2f", 
-					str_replace( ',', '.', $_POST['rest_capacity'] ) -
-						 str_replace( ',', '.', $_POST['performed_capacity_today'] ) );
+				
+                $restCap = 0;
+                $perfCapToday = 0;
+                if ( isset($_POST['rest_capacity']) )
+                {
+                	$restCap = $_POST['rest_capacity'];
+                }	
+                if ( isset($_POST['performed_capacity_today']) )
+                {
+                	$perfCapToday = $_POST['performed_capacity_today'];
+                }
+
+				$agilemantis_tasks->rest_capacity = 
+				  sprintf( "%.2f", 
+					str_replace( ',', '.', $restCap ) -
+					str_replace( ',', '.', $perfCapToday ) );
+				
 				$agilemantis_tasks->status = $_POST['status'];
 				$agilemantis_tasks->daily_scrum = 0;
 				
@@ -172,19 +187,19 @@ if( $_POST['delete'] ) {
 				}
 				
 				if( $getSprint['status'] == 1 &&
-					 str_replace( ',', '.', $_POST['rest_capacity'] ) !=
+					 str_replace( ',', '.', $restCap ) !=
 					 str_replace( ',', '.', $_POST['old_rest_capacity'] ) &&
 					 str_replace( ',', '.', $_POST['rest_capacity'] ) > 0 ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
 				
 				if( $getSprint['status'] == 1 &&
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) != 0 ) {
+					 str_replace( ',', '.', $perfCapToday ) != 0 ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
 				
 				if( $getSprint['status'] == 1 &&
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) != 0 ||
+					 str_replace( ',', '.', $perfCapToday ) != 0 ||
 					 $_POST['oldstatus'] == $_POST['status'] ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
@@ -198,61 +213,61 @@ if( $_POST['delete'] ) {
 				}
 				
 				# change capacity information
-				$agilemantis_tasks->capacity = str_replace( ',', '.', 
-					$_POST['performed_capacity_today'] );
+				$agilemantis_tasks->capacity = 
+				   str_replace( ',', '.', $perfCapToday );
 				
-				if( str_replace( ',', '.', $_POST['rest_capacity'] ) ==
+				if( str_replace( ',', '.', $restCap ) ==
 					 str_replace( ',', '.', $_POST['old_rest_capacity'] ) &&
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) == 0 ) {
+					 str_replace( ',', '.', $perfCapToday ) == 0 ) {
 					$agilemantis_tasks->capacity = 0;
 				}
 				
-				if( str_replace( ',', '.', $_POST['rest_capacity'] ) >
+				if( str_replace( ',', '.', $restCap ) >
 					 str_replace( ',', '.', $_POST['old_rest_capacity'] ) &&
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) == 0 ) {
+					 str_replace( ',', '.', $perfCapToday ) == 0 ) {
 					$agilemantis_tasks->capacity = 0;
 				}
 				
-				if( str_replace( ',', '.', $_POST['rest_capacity'] ) <
+				if( str_replace( ',', '.', $restCap) <
 					 str_replace( ',', '.', $_POST['old_rest_capacity'] ) ) {
 					$agilemantis_tasks->capacity = 0;
-					if( $_POST['rest_capacity'] <= 0 ) {
+					if( $restCap <= 0 ) {
 						$agilemantis_tasks->capacity = 0;
 						$agilemantis_tasks->rest_capacity = 0;
 					}
 				}
 				
-				if( str_replace( ',', '.', $_POST['performed_capacity_today'] ) != 0 &&
-					 str_replace( ',', '.', $_POST['rest_capacity'] ) !=
+				if( str_replace( ',', '.', $perfCapToday ) != 0 &&
+					 str_replace( ',', '.', $restCap ) !=
 					 str_replace( ',', '.', $_POST['old_rest_capacity'] ) ) {
 					$agilemantis_tasks->capacity = str_replace( ',', '.', 
-						$_POST['performed_capacity_today'] );
+						$perfCapToday );
 					$agilemantis_tasks->rest_capacity = str_replace( ',', '.', 
-						$_POST['rest_capacity'] );
+						$restCap );
 				}
 				
-				if( str_replace( ',', '.', $_POST['rest_capacity'] ) -
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) <= 0 &&
-					 str_replace( ',', '.', $_POST['rest_capacity'] ) ==
+				if( str_replace( ',', '.', $restCap ) -
+					 str_replace( ',', '.', $perfCapToday ) <= 0 &&
+					 str_replace( ',', '.', $restCap ) ==
 					 str_replace( ',', '.', $_POST['old_rest_capacity'] ) ) {
 					$agilemantis_tasks->rest_capacity = 0;
 				}
 				
 				if( $_POST['oldstatus'] != $_POST['status'] ) {
 					$agilemantis_tasks->capacity = str_replace( ',', '.', 
-						$_POST['performed_capacity_today'] );
+						$performed_capToday );
 				}
 				
 				# calculate developer performed work
 				if( $agilemantis_tasks->performed_capacity +
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) < 0 &&
-					 $_POST['performed_capacity_today'] != 0 ) {
+					 str_replace( ',', '.', $perfCapToday ) < 0 &&
+					 $perfCapToday != 0 ) {
 					$agilemantis_tasks->capacity = 0;
 					$agilemantis_tasks->capacity -= $agilemantis_tasks->performed_capacity;
 					$agilemantis_tasks->performed_capacity = 0;
 					$system = plugin_lang_get( 'edit_task_error_127906' );
 					$agilemantis_tasks->rest_capacity = sprintf( "%.2f", 
-						str_replace( ',', '.', $_POST['rest_capacity'] ) );
+						str_replace( ',', '.', $restCap ) );
 				}
 				
 				# if task is new, rest capacity is equal to planned capacity
@@ -270,10 +285,10 @@ if( $_POST['delete'] ) {
 				}
 				
 				# check wether work is already performed on the current day
-				if( $_POST['action'] == "editTask" &&
+				if( isset($_POST['action']) && $_POST['action'] == "editTask" &&
 					 ($agilemantis_tasks->getPerformedCapacity( $agilemantis_tasks->id ) == 0 ||
 					 $agilemantis_tasks->getPerformedCapacity( $agilemantis_tasks->id ) == '') &&
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) == '' &&
+					 str_replace( ',', '.', $perfCapToday ) == '' &&
 					 $_POST['status'] == 4 && $_POST['oldstatus'] < 4 && !isset( 
 						$_POST['resolved'] ) && $agilemantis_tasks->developer > 0 &&
 					 $agilemantis_tasks->rest_capacity > 0 &&
@@ -288,7 +303,7 @@ if( $_POST['delete'] ) {
 				if( $_POST['resolved'] == plugin_lang_get( 'button_resolve' ) &&
 					 ($agilemantis_tasks->getPerformedCapacity( $agilemantis_tasks->id ) == 0 ||
 					 $agilemantis_tasks->getPerformedCapacity( $agilemantis_tasks->id ) == '') &&
-					 str_replace( ',', '.', $_POST['performed_capacity_today'] ) == '' &&
+					 str_replace( ',', '.', $perfCapToday ) == '' &&
 					 $agilemantis_tasks->developer > 0 ) {
 					$system = plugin_lang_get( 'edit_task_error_127901' );
 				} elseif( $_POST['resolved'] == plugin_lang_get( 'button_resolve' ) ) {
@@ -310,8 +325,8 @@ if( $_POST['delete'] ) {
 				}
 				
 				# if performed capacity today is not a number -> error
-				if( !empty( $_POST['performed_capacity_today'] ) &&
-					 !is_numeric( str_replace( ',', '.', $_POST['performed_capacity_today'] ) ) &&
+				if( !empty( $perfCapToday ) &&
+					 !is_numeric( str_replace( ',', '.', $perfCapToday ) ) &&
 					 $system == '' ) {
 					$system = plugin_lang_get( 'edit_task_error_985900' );
 				}
@@ -323,18 +338,19 @@ if( $_POST['delete'] ) {
 				# tasks status cannot be changed from resolved or closed if there is no rest capacity 
 				if( $_POST['oldstatus'] > 3 && $agilemantis_tasks->status == 1 &&
 					 $agilemantis_tasks->developer > 0 && $agilemantis_tasks->performed_capacity > 0 &&
-					 $_POST['rest_capacity'] == 0 && $system == '' ) {
+					 $restCap == 0 && $system == '' ) {
 					$system = plugin_lang_get( 'edit_task_error_127902' );
 				}
 				
 				if( $_POST['oldstatus'] > 3 && $agilemantis_tasks->status == 2 &&
 					 $agilemantis_tasks->developer > 0 && $agilemantis_tasks->performed_capacity > 0 &&
-					 $_POST['rest_capacity'] == 0 && $system == '' ) {
+					 $restCap == 0 && $system == '' ) {
 					$system = plugin_lang_get( 'edit_task_error_127903' );
 				}
 				
 				if( $_POST['oldstatus'] > 3 && $agilemantis_tasks->status == 3 &&
-					 $agilemantis_tasks->developer > 0 && $_POST['rest_capacity'] == 0 &&
+					 $agilemantis_tasks->developer > 0 && 
+					 $restCap == 0 &&
 					 $system == '' ) {
 					$system = plugin_lang_get( 'edit_task_error_127904' );
 				}
@@ -423,21 +439,21 @@ if( $_POST['delete'] ) {
 							$agilemantis_tasks->status = 3;
 						}
 						
-						if( str_replace( ',', '.', $_POST['rest_capacity'] ) <
+						if( str_replace( ',', '.', $restCap ) <
 							 str_replace( ',', '.', $_POST['old_rest_capacity'] ) &&
 							 $agilemantis_tasks->rest_capacity > 0 ) {
 							$agilemantis_tasks->status = 3;
 						}
 						
-						if( str_replace( ',', '.', $_POST['rest_capacity'] ) !=
+						if( str_replace( ',', '.', $restCap ) !=
 							 str_replace( ',', '.', $_POST['old_rest_capacity'] ) &&
 							 $agilemantis_tasks->rest_capacity > 0 ) {
 							$agilemantis_tasks->status = 3;
-							$agilemantis_tasks->rest_capacity = str_replace( ',', '.', 
-								$_POST['rest_capacity'] );
+							$agilemantis_tasks->rest_capacity = 
+							  str_replace( ',', '.', $restCap );
 						}
 						
-						if( str_replace( ',', '.', $_POST['rest_capacity'] ) !=
+						if( str_replace( ',', '.', $restCap ) !=
 							 str_replace( ',', '.', $_POST['old_rest_capacity'] ) &&
 							 $agilemantis_tasks->rest_capacity == 0 ) {
 							$agilemantis_tasks->status = 4;
@@ -455,7 +471,7 @@ if( $_POST['delete'] ) {
 						}
 						
 						if( ($agilemantis_tasks->status == 3 || $agilemantis_tasks->status == 2) &&
-							 str_replace( ',', '.', $_POST['performed_capacity_today'] ) > 0 &&
+							 str_replace( ',', '.', $perfCapToday ) > 0 &&
 							 $agilemantis_tasks->rest_capacity <= 0 ) {
 							$agilemantis_tasks->status = 4;
 							$task_resolved = true;
@@ -494,8 +510,9 @@ if( $_POST['delete'] ) {
 						$agilemantis_tasks->status = 3;
 					}
 					
-					if( $agilemantis_tasks->performed_capacity + $_POST['performed_capacity_today'] <=
-						 0 && $agilemantis_tasks->rest_capacity > 0 && $_POST['status'] == 2 ) {
+					if( $agilemantis_tasks->performed_capacity + $perfCapToday <=
+						 0 && $agilemantis_tasks->rest_capacity > 0 && 
+						 $_POST['status'] == 2 ) {
 						$agilemantis_tasks->status = 2;
 					}
 					
@@ -716,7 +733,7 @@ if( $getSprint['status'] > 0 ) {
 			<?php echo plugin_lang_get( 'edit_task_name' )?>
 		</td>
 				<td><input type="text" style="width: 400px;" name="name"
-					value="<?php if($_POST['name']){?><?php echo $_POST['name']?><?php } else {?><?php echo $task['name']?><?php }?>">
+					value="<?php if(isset($_POST['name']) && $_POST['name']){?><?php echo $_POST['name']?><?php } else {?><?php echo $task['name']?><?php }?>">
 				</td>
 			</tr>
 

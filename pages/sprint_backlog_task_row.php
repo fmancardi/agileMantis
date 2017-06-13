@@ -24,6 +24,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 ?>
+<?php
+$sprint_end_disable = '';
+$style = '';
+?>
 		<tr style="background-color:<?php echo $uscolor;?>">
 			<td>
 				<?php if( !bug_is_readonly( $row['id'] ) ) { ?>

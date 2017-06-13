@@ -1377,10 +1377,17 @@ class gadiv_commonlib {
 			$sort_summary[$key] = $row['summary'];
 			$sort_status[$key] = $row['status'];
 			$sort_target_version[$key] = $row['target_version'];
-			$sort_b_category_id[$key] = $row['b_category_id'];
-			$sort_category_name[$key] = $row['category_name'];
-			$sort_c_project_id[$key] = $row['c_project_id'];
-			$sort_project_name[$key] = $row['project_name'];
+			$sort_b_category_id[$key] = isset($row['b_category_id']) ? 
+			                            $row['b_category_id'] : 0;
+
+			$sort_category_name[$key] = isset($row['category_name']) ?
+			                            $row['category_name'] : '';
+
+			$sort_c_project_id[$key] = isset($row['c_project_id']) ? 
+			                           $row['c_project_id'] : 0;
+
+			$sort_project_name[$key] = isset($row['project_name']) ?
+			                           $row['project_name'] : 0;
 
 			if( isset($row['productBacklog']) )
 			{
@@ -1391,9 +1398,13 @@ class gadiv_commonlib {
 				$sort_productBacklog[$key] = $row['productbacklog'];
 			}	
 			
-			$sort_business_value[$key] = $row['businessValue'];
+			$sort_business_value[$key] = isset($row['businessValue']) ?
+			                             $row['businessValue'] : '';
+
 			$sort_story_points[$key] = $row['storyPoints'];
-			$sort_sprint[$key] = $row['sprint'];
+
+			$sort_sprint[$key] = isset($row['sprint']) ? 
+			                     $row['sprint'] : '' ;
 
 			if( isset($row['rankingOrder']) )
 			{

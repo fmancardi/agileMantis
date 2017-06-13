@@ -541,7 +541,7 @@ if ( isset($_GET['warning']) )
 						type="hidden" name="sprintName"
 						value="<?php echo $getSprint['name'] ?>"> <input type="hidden"
 						name="fromSprintBacklog"
-						value="<?php echo $request['fromSprintBacklog']?>"> <input
+						value="<?php echo isset($request['fromSprintBacklog']) ? $request['fromSprintBacklog']:'';?>"> <input
 						type="hidden" name="fromTaskPage" value="1"> <input type="submit"
 						name="submit"
 						value="<?php echo plugin_lang_get( 'edit_tasks_edit' )?>">

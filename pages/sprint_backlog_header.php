@@ -27,7 +27,7 @@
 $hinweis_rest_capacity = '';
 $warning = '';
 $system = "";
-$planned_capacity = '';
+$planned_capacity = 0;
 $hinweis = '';
 $no_sprints = false;
 $gesamt_storypoints = 0;

@@ -257,6 +257,7 @@ if( $no_sprints == false ) {?>
 						$uscolor = '#c9ccc4';
 						break;
 				}
+
 				if( config_get( 'show_only_own_userstories', null, auth_get_current_user_id() ) == 1 &&
 					 $agilemantis_sprint->isUserTask( $row['id'], auth_get_current_user_id() ) ) {
 					include (AGILEMANTIS_PLUGIN_URI . 'pages/sprint_backlog_task_row.php');
