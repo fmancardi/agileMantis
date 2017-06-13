@@ -148,7 +148,7 @@ class gadiv_tasks extends gadiv_commonlib {
 					AND task_id = " . db_param( 1 );
 		$t_params = array( $event, $id );
 		$result_array = $this->executeQuery( $t_sql, $t_params );
-		return $result_array[0];
+		return isset($result_array[0]) ? $result_array[0] : null;
 	}
 	
 	# function bugnote_add( 

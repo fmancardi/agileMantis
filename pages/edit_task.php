@@ -27,6 +27,7 @@
 
 
 	layout_page_header(plugin_lang_get( 'edit_task_title' )); 
+	layout_page_begin();
 ?>
 <br>
 <?php
@@ -710,9 +711,10 @@ if( $getSprint['status'] > 0 ) {
 		value="<?php echo $task['rest_capacity']?>"> <input type="hidden"
 		name="fromSprintBacklog"
 		value="<?php echo $_POST['fromSprintBacklog']?>"> <input type="hidden"
-		name="fromTaskboard" value="<?php echo $_POST['fromTaskboard']?>"> <input
+		name="fromTaskboard" 
+		value="<?php echo isset($_POST['fromTaskboard']) ? $_POST['fromTaskboard'] : '';?>"> <input
 		type="hidden" name="fromTaskPage"
-		value="<?php echo $_POST['fromTaskPage']?>"> <input type="hidden"
+		value="<?php echo isset($_POST['fromTaskPage']) ? $_POST['fromTaskPage'] : ''; ?>"> <input type="hidden"
 		name="currentUnit" value="<?php echo $currentUnit?>">
 <?php if($getSprint['status'] == 0){ ?>
 	<input type="hidden" name="status" value="<?php echo $task['status']?>">
