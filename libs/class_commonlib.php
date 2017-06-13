@@ -1367,7 +1367,7 @@ class gadiv_commonlib {
 	}
 
 	function sortUserStories( $sort_by, $direction, $user_stories ) {
-		if( empty( $user_stories ) ) {
+		if( empty( $user_stories ) || count($user_stories) == 0) {
 			return $user_stories;
 		}
 		
@@ -1381,12 +1381,28 @@ class gadiv_commonlib {
 			$sort_category_name[$key] = $row['category_name'];
 			$sort_c_project_id[$key] = $row['c_project_id'];
 			$sort_project_name[$key] = $row['project_name'];
-			$sort_productBacklog[$key] = $row['productBacklog'];
+
+			if( isset($row['productBacklog']) )
+			{
+				$sort_productBacklog[$key] = $row['productBacklog'];
+			}	
+			if( isset($row['productbacklog']) )
+			{
+				$sort_productBacklog[$key] = $row['productbacklog'];
+			}	
+			
 			$sort_business_value[$key] = $row['businessValue'];
 			$sort_story_points[$key] = $row['storyPoints'];
 			$sort_sprint[$key] = $row['sprint'];
-			$sort_ranking_order[$key] = $row['rankingOrder'];
-			$sort_planned_work[$key] = $row['plannedWork'];
+
+			if( isset($row['rankingOrder']) )
+			{
+				$sort_ranking_order[$key] = $row['rankingOrder'];
+			}	
+			if( isset($row['plannedWork']) )
+			{
+				$sort_planned_work[$key] = $row['plannedWork'];
+			}	
 		}
 		
 		if( $direction == 'DESC' ) {

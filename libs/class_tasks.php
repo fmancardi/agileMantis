@@ -50,6 +50,7 @@ class gadiv_tasks extends gadiv_commonlib {
 		$t_params = array( $this->spr, $userstory['sprint'], $this->developer );
 		
 		# Add Condition to WHERE-Clause
+		$addSql = '';
 		if( $this->id > 0 ) {
 			$addSql = " AND id != " . db_param( 3 );
 			$t_params[] = $this->id;
@@ -108,6 +109,7 @@ class gadiv_tasks extends gadiv_commonlib {
 		}
 		
 		# Check if Sprint Rest Capacity + New Planned Capacity is larger than Developer Capacity
+		$doIt = isset($sprint[0]) && isset($sprint[0]['rest_capacity']); 
 		if( ($sprint[0]['rest_capacity'] + $this->rest_capacity) * $multiplier >
 			 $developer[0]['capacity'] ) {
 			return false;

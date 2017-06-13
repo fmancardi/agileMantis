@@ -24,6 +24,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
+$system = '';
 
 if( $_GET['us_id'] > 0 ) {
 	
@@ -32,6 +33,8 @@ if( $_GET['us_id'] > 0 ) {
 	?>
 <br>
 <?php
+
+
 	# collect task, user story and sprint information
 	$agilemantis_tasks->us_id = ( int ) $_GET['us_id'];
 	$usData = $agilemantis_tasks->checkForUserStory( $agilemantis_tasks->us_id );
@@ -41,7 +44,7 @@ if( $_GET['us_id'] > 0 ) {
 	$getSprint = $agilemantis_sprint->getSprintById();
 	
 	#save story points and planned work from chosen user story
-	if( $_POST['action'] == 'save' ) {
+	if( isset($_POST['action']) && $_POST['action'] == 'save' ) {
 		$agilemantis_sprint->addStoryPoints( $agilemantis_tasks->us_id, $_POST['storypoints'], 
 			$usData['storypoints'] );
 		$agilemantis_sprint->addPlannedWork( $agilemantis_tasks->us_id, $_POST['plannedWork'], 
@@ -50,7 +53,8 @@ if( $_GET['us_id'] > 0 ) {
 	}
 	
 	# divide task action
-	if( $_POST['divide_task'] == plugin_lang_get( 'button_assume' ) ) {
+	if( isset($_POST['divide_task']) && 
+		$_POST['divide_task'] == plugin_lang_get( 'button_assume' ) ) {
 		
 		# common
 		$agilemantis_tasks->us_id = $_POST['us_id'];
@@ -86,7 +90,9 @@ if( $_GET['us_id'] > 0 ) {
 	}
 	
 	# add new task
-	if( $_POST['action'] == 'addTask' && $_SESSION['uniqformid'] != $_POST['uniqformid'] ) {
+	if( isset($_POST['action']) && $_POST['action'] == 'addTask' &&
+	    isset($_POST['uniqformid']) && $_SESSION['uniqformid'] != $_POST['uniqformid'] ) {
+		
 		$_SESSION['uniqformid'] = $_POST['uniqformid'];
 		if( $_POST['name'] == "" ) {
 			$system = plugin_lang_get( 'edit_tasks_error_922800' );
@@ -118,8 +124,9 @@ if( $_GET['us_id'] > 0 ) {
 			$agilemantis_tasks->rest_capacity = 0.00;
 		}
 		
-		$agilemantis_tasks->performed_capacity = str_replace( ',', '.', 
-			$_POST['performed_capacity'] );
+		$agilemantis_tasks->performed_capacity = 
+		str_replace( ',', '.', 
+			        isset($_POST['performed_capacity']) ? $_POST['performed_capacity'] : 0);
 		if( !$agilemantis_tasks->performed_capacity ) {
 			$agilemantis_tasks->performed_capacity = 0.00;
 		}
@@ -133,6 +140,7 @@ if( $_GET['us_id'] > 0 ) {
 			$_GET['warning'] = 2;
 		}
 		
+        $tasks_with_planned_capacity_exist = false;
 		if( $_POST['sprintName'] != '' && $_POST['id'] == 0 && $system == "" &&
 			 $agilemantis_tasks->rest_capacity == 0.00 ) {
 			$userstories = $agilemantis_sprint->getSprintStories( $_POST['sprintName'] );
@@ -197,18 +205,33 @@ if( $_GET['us_id'] > 0 ) {
 	
 	$request = array_merge($_POST, $_GET);
 ?>
-<?php if($_GET['warning'] == 1){
-	$warning = plugin_lang_get( 'edit_tasks_error_120800' );?>
-<?php }?>
-<?php if($_GET['warning'] == 2){
-	$warning = plugin_lang_get( 'edit_tasks_error_108800' );?>
-<?php }?>
-<?php if($_GET['warning'] == 3){
-	$warning = plugin_lang_get( 'edit_tasks_error_107800' );?>
-<?php }?>
-<?php if($_GET['warning'] == 4){
-	$warning = plugin_lang_get( 'edit_tasks_error_107801' );?>
-<?php }?>
+<?php 
+
+$system = '';
+$warning = '';
+$show_rd = false;
+$show_pr = false;
+$show_pc = false;
+$show_tech = false;
+$show_ro = false;
+
+if ( isset($_GET['warning']) )
+{
+	if($_GET['warning'] == 1){
+		$warning = plugin_lang_get( 'edit_tasks_error_120800' ); 
+	}
+	if($_GET['warning'] == 2){
+		$warning = plugin_lang_get( 'edit_tasks_error_108800' ); 
+	}
+	if($_GET['warning'] == 3){
+		$warning = plugin_lang_get( 'edit_tasks_error_107800' ); 
+	}
+	if($_GET['warning'] == 4){
+		$warning = plugin_lang_get( 'edit_tasks_error_107801' ); 
+	}
+}	
+?>
+
 <?php if($system){?>
 <center>
 	<span style="color: red; font-size: 16px; font-weight: bold;"><?php echo $system?></span>
@@ -222,7 +245,7 @@ if( $_GET['us_id'] > 0 ) {
 <br>
 <?php }?>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td class="form-title" colspan="6">User Story - <span
 				style="font-weight: bold; color: grey;">"<?php echo string_display_line_links($usSumText[0]['summary'])?>"</span>
@@ -462,7 +485,7 @@ if( $_GET['us_id'] > 0 ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td class="form-title" colspan="6">Tasks - <span
 				style="font-weight: bold; color: grey;">"<?php echo string_display_line_links( $usSumText[0]['summary'] )?>"</span>
@@ -561,13 +584,15 @@ if( $_GET['us_id'] > 0 ) {
 		type="hidden" name="id" value="0"> <input type="hidden" name="us_id"
 		value="<?php echo $agilemantis_tasks->us_id?>"> <input type="hidden"
 		name="status" value="1"> <input type="hidden" name="fromSprintBacklog"
-		value="<?php echo $_POST['fromSprintBacklog']?>"> <input type="hidden"
-		name="sprintName" value="<?php echo $_POST['sprintName']?>"> <input
+		value="<?php echo isset($_POST['fromSprintBacklog']) ? 
+		                        $_POST['fromSprintBacklog'] : ''; ?>"> 
+		            <input type="hidden" name="sprintName" 
+		                   value="<?php echo isset($_POST['sprintName']) ?		         $_POST['sprintName'] : ''; ?>"> <input
 		type="hidden" name="uniqformid"
 		value="<?php echo md5( uniqid( microtime(), 1 ) ) ?>" /> <input
 		type="hidden" name="currentUnit" value="<?php echo $currentUnit?>">
 	<div class="table-container">
-		<table align="center" class="width100" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td class="form-title" colspan="4">
 				<?php echo plugin_lang_get( 'edit_tasks_add' )?>
@@ -583,10 +608,12 @@ if( $_GET['us_id'] > 0 ) {
 			<tr style="background-color: #fcbdbd">
 				<td style="width: 20%;"><input type="text" name="name"
 					style="width: 98%;"
-					value="<?php if( $_POST['name'] && $system != "" ){ echo $_POST['name'];}?>"></td>
+					value="<?php if( isset($_POST['name']) && 
+					                 $_POST['name'] && $system != "" ){ 
+						echo isset($_POST['name']) ? $_POST['name']: '';}?>"></td>
 				<td style="width: 20%;"><textarea name="description"
 						style="width: 98%; height: 50px;"><?php 
-					if( $_POST['description'] && $system != "" ) { 
+					if( isset($_POST['description']) && $_POST['description'] && $system != "" ) { 
 						echo $_POST['description'];
 					}?></textarea></td>
 				<td style="width: 20%;"><select name="developer" style="width: 98%;">
@@ -599,7 +626,8 @@ if( $_GET['us_id'] > 0 ) {
 							foreach( $user AS $num => $row ) {
 								if( $row['id'] != 0 ) {?>
 									<option value="<?php echo $row['id']?>"
-							<?php if( $row['id'] == $_POST['developer'] && $system != "" ) { 
+							<?php if(isset($_POST['developer']) &&  
+								     $row['id'] == $_POST['developer'] && $system != "" ) { 
 									echo 'selected';
 									}?>><?php 
 									echo $row['username']?></option>
@@ -626,7 +654,7 @@ if( $_GET['us_id'] > 0 ) {
 	</form>
 	<?php
 		# redirect back to sprint backlog or view issue page
-	if( $request['fromSprintBacklog'] == 1 ) {
+	if( isset($request['fromSprintBacklog']) && $request['fromSprintBacklog'] == 1 ) {
 		$redirect = plugin_page( 'sprint_backlog.php' ) . "&sprintName=" .
 			 urlencode( $getSprint['name'] );
 	} else {
@@ -643,6 +671,6 @@ if( $_GET['us_id'] > 0 ) {
 	$f_bug_id = $agilemantis_tasks->us_id;
 	require( 'bugnote_add_inc.php' );
 ?>
-<?php html_status_legend();?>
+<?php // html_status_legend();?>
 <?php layout_page_end() ?>
 <?php }?>

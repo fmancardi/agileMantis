@@ -26,6 +26,7 @@
 
 
 $system = null;
+$page_backlog = '';
 
 # get all user stories from a selected product backlog
 $userstories = $agilemantis_pb->getUserStoriesByProductBacklogName( $product_backlog );
@@ -117,6 +118,7 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 				</form>
 			</td>
 		</tr>
+		<tr><td>&nbsp;</td></tr>
 		<tr>
 			<form action="<?php echo plugin_page("product_backlog.php")?>" id="fileform" method="post">
 				<input type="hidden" name="action" value="save_values"> 
@@ -193,7 +195,11 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 		</td>
 	</tr>
 	<?php
+	$t_buglist = '';
+	$storypoints_gesamt = 0;
+
 	if( !empty( $userstories ) ) {
+
 		foreach( $userstories AS $num => $row ) {
 			$t_buglist .= $row['id'] . ',';
 			# set background color for each user story row

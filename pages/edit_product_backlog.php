@@ -360,19 +360,21 @@
 						if( empty( $sprint ) ) {
 							$delete_with_warning = true;
 						}
-						
-						if( $sprint[0]['status'] == 0 ) {
-							$delete_with_warning = true;
-						}
-						
-						if( $sprint[0]['status'] == 1 ) {
-							$no_userstories = false;
-							$delete_with_warning = false;
-						}
-						
-						if( $sprint[0]['status'] == 2 ) {
-							$delete_with_warning = false;
-						}
+						else
+						{
+							if( $sprint[0]['status'] == 0 ) {
+								$delete_with_warning = true;
+							}
+							
+							if( $sprint[0]['status'] == 1 ) {
+								$delete_with_warning = false;
+								$no_userstories = false;
+							}
+							
+							if( $sprint[0]['status'] == 2 ) {
+								$delete_with_warning = false;
+							}
+						}	
 					}
 				}
 				

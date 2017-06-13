@@ -113,11 +113,19 @@ if( $one_backlog_more_teams == false ) {
 		}
 	}
 }
-echo __LINE__;
-var_dump(array($product_backlog, $user_id));
-var_dump($developer);
-var_dump($scrumMaster);
 
+/*
+echo '<br><br>';
+echo __LINE__;
+echo '<pre> PBL+UID';
+var_dump(array($product_backlog, $user_id));
+echo '<br>DEV';
+var_dump($developer);
+
+echo '<br>SMA';
+var_dump($scrumMaster);
+echo '</pre>';
+*/
 
 # check if product backlog has running sprints
 $no_sprint_found = null;
@@ -151,8 +159,7 @@ if( $one_backlog_more_teams || (empty( $developer ) && empty( $scrumMaster )) ) 
 } else {
 	$disable_button = '';
 }
-echo 'dd:' . $disable_button . 'zz';
-die();
+echo 'disable_button*' . $disable_button . '*';
 ?>
 <br>
 <div class="table-container">
