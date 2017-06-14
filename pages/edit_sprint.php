@@ -32,6 +32,11 @@
 <?php include(AGILEMANTIS_PLUGIN_URI.'/pages/footer_menu.php');?>
 <br>
 <?php
+$sprintStatus = plugin_config_get('sprint_status_domain');
+$system = '';
+$disabled = '';
+$disables = '';
+
 
 // Redirect to backlog list view if invalid or back_button
 $kj = array('action','back_button','product_backlog_id','id','name',
@@ -46,6 +51,8 @@ foreach ($kj as $yy)
 	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : null;
 }
 
+$_POST['status'] = is_null($_POST['status']) ? $_POST['status'] : 
+                   $sprintStatus['open'];
 
 $kj = array('sprint_id','end','edit');
 
@@ -66,9 +73,7 @@ if( empty($_POST) || $_POST['back_button'] ) {
 	header( $agilemantis_sprint->forwardReturnToPage( "sprints.php" ) );
 }
 
-$system = '';
-$disabled = '';
-$disables = '';
+
 
 # set current date
 $current_date = mktime( 0, 0, 0, date( 'm' ), date( 'd' ), date( 'Y' ) );
@@ -85,7 +90,7 @@ $agilemantis_sprint->end = str_replace( ',', '.', $_POST['end_date'] );
 $agilemantis_sprint->daily_scrum = isset($_POST['daily_scrum']) ? 1 : 0;
 
 # only change description when sprint is closed
-if( $_POST['change_description'] && $_POST['status'] == 2 ) {
+if( $_POST['change_description'] && $_POST['status'] == $sprintStatus['closed'] ) {
 	$agilemantis_sprint->editSprint();
 	header( $agilemantis_sprint->forwardReturnToPage( "sprints.php" ) );
 }
@@ -286,14 +291,15 @@ if( $_POST['edit'] ) {
 }
 
 $s = array('start' => null, 'end' => null, 'id' => 0, 'team_id' => -1,
-	       'status' => false,'name' => null, 'description' => null,
-	       'daily_scrum' => 0);
+	       'status' => $sprintStatus['open'],'name' => null, 
+	       'description' => null, 'daily_scrum' => 0);
 
 if( $agilemantis_sprint->sprint_id > 0 ) {
 	$s = $agilemantis_sprint->getSprintByName();
 	
 	# mark input fields as read only or disabled when sprint is running / closed
-	if( $s['status'] == 1 || $s['status'] == 2 ) {
+	if( $s['status'] == $sprintStatus['running'] || 
+		$s['status'] == $sprintStatus['closed'] ) {
 		$disabled = 'style="background-color: #EBEBE4;" readonly';
 		$disables = "disabled";
 	} else if( $s['team_id'] > 0 ) {
@@ -404,7 +410,7 @@ if( !$s['end'] ) {
 							echo date( 'd.m.Y', ( time() 
 								+ ( plugin_config_get( 'gadiv_sprint_length' ) -1 ) * 86400 ) ); 
 						} ?>"
-					<?php if( $s['status'] == 2 ) {
+					<?php if( $s['status'] == $sprintStatus['closed'] ) {
 						?> <?php echo $disabled?>
 					<?php }?>>
 			<?php if( $s['id'] > 0 ) { ?>
@@ -419,13 +425,13 @@ if( !$s['end'] ) {
             <?php echo plugin_lang_get( 'edit_sprints_status' )?>
         </td>
 				<td class="left">
-			<?php if( $s['status'] == 0 ) {?>
+			<?php if( $s['status'] == $sprintStatus['open'] ) {?>
 				<?php echo plugin_lang_get( 'status_open' )?>
 			<?php }?>
-			<?php if( $s['status'] == 1 ) {?>
+			<?php if( $s['status'] == $sprintStatus['running'] ) {?>
 				<?php echo plugin_lang_get( 'status_running' )?>
 			<?php }?>
-			<?php if( $s['status'] == 2 ) {?>
+			<?php if( $s['status'] == $sprintStatus['closed'] ) {?>
 				<?php echo plugin_lang_get( 'status_closed' )?>
 			<?php }?>
         </td>
@@ -479,7 +485,7 @@ if( !$s['end'] ) {
 	<tr <?php echo helper_alternate_class() ?>>
 				<td class="category">Daily Scrum Meeting with Taskboard</td>
 				<td class="left"><input type="checkbox" name="daily_scrum"
-					<?php if( plugin_config_get('gadiv_daily_scrum') == 0 || $s['status'] == 2 ) {?>
+					<?php if( plugin_config_get('gadiv_daily_scrum') == 0 || $s['status'] == $sprintStatus['closed'] ) {?>
 					disabled <?php }?>
 					<?php if( $s['daily_scrum'] == 1 
 							|| ( $s['id'] == 0 && $t[0]['daily_scrum'] == 1 ) ) {?>
@@ -513,7 +519,7 @@ if( !$s['end'] ) {
 				<td><span class="required"> * <?php echo lang_get( 'required' ) ?></span>
 				</td>
 				<td class="center">
-			<?php if( $s['status'] == 2 ) { ?>
+			<?php if( $s['status'] == $sprintStatus['closed'] ) { ?>
 				<input type="submit" name="change_description" class="button"
 					value="<?php echo plugin_lang_get( 'edit_sprints_change_description' )?>">
 			<?php } else {?>

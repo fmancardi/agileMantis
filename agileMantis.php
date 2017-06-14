@@ -84,7 +84,9 @@ class agileMantisPlugin extends MantisPlugin {
 			'gadiv_ranking_order' 			=> 0,
 			'gadiv_technical' 				=> 0,
 			'gadiv_release_documentation' 	=> 0,
-			'gadiv_tracker_planned_costs' 	=> 0
+			'gadiv_tracker_planned_costs' 	=> 0,
+               'sprint_status_domain' => 
+                    array('open' => 0, 'running' => 1, 'closed' => 2),
 		);
 	}
 
@@ -865,6 +867,8 @@ class agileMantisPlugin extends MantisPlugin {
 			global $agilemantis_pb;
 			global $agilemantis_commonlib;
 
+               $task_disable = '';
+
 			// Only projects with agilMantis backlog
 			if( !$agilemantis_commonlib->projectHasBacklogs( helper_get_current_project() ) ) {
 				return;
@@ -873,7 +877,7 @@ class agileMantisPlugin extends MantisPlugin {
 			if( $_SESSION['AGILEMANTIS_ISMANTISADMIN'] == 1
 					|| $_SESSION['AGILEMANTIS_ISMANTISUSER'] == 1 ) {
 
-				if( $_POST['saveValues'] ) {
+				if( isset($_POST['saveValues']) && $_POST['saveValues'] ) {
 					$agilemantis_pb->setCustomFieldValues( $p_project_id );
 					bug_update_date( $p_project_id );
 
@@ -904,6 +908,8 @@ class agileMantisPlugin extends MantisPlugin {
 				$pb_name = $story['name'];
 				$sprint_name = $story['sprint'];
 				$disable_sprint_button = '';
+                    $page_backlog = '';
+
 				if( $sprint_name == "" ) {
 					$disable_sprint_button = 'disabled';
 				} else {
@@ -911,7 +917,7 @@ class agileMantisPlugin extends MantisPlugin {
 				}
 				require_once( AGILEMANTIS_CORE_URI."agile_mantis_custom_fields_inc.php" );
 
-				if( $_GET['save'] == true ) {
+				if( isset($_GET['save']) && $_GET['save'] == true ) {
 					$hinweis = '<span class="message_ok">'.
 								plugin_lang_get( 'view_issue_successfully_saved' ).'</span>';
 				} else {

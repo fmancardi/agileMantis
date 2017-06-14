@@ -32,6 +32,7 @@
 <br>
 <?php
 $system = '';
+$sprintStatus = plugin_config_get('sprint_status_domain');
 
 # get task and user story id
 if( isset($_GET['us_id']) && $_GET['us_id'] ) {
@@ -40,12 +41,15 @@ if( isset($_GET['us_id']) && $_GET['us_id'] ) {
 if( isset($_POST['us_id']) && $_POST['us_id'] ) {
 	$agilemantis_tasks->us_id = intval($_POST['us_id']);
 }
+//echo __LINE__;
 
 # get all task and user story information
 $usData = $agilemantis_tasks->checkForUserStory( $agilemantis_tasks->us_id );
 $usSumText = $agilemantis_tasks->getUserStoryById();
 $agilemantis_sprint->sprint_id = $usData['sprint'];
 $getSprint = $agilemantis_sprint->getSprintById();
+
+// var_dump($getSprint);
 
 # calculate current date
 $date = date( 'Y' ) . '-' . date( 'm' ) . '-' . date( 'd' );
@@ -73,7 +77,7 @@ if( isset($_POST['delete']) && $_POST['delete'] ) {
 	header( $agilemantis_sprint->forwardReturnToPage( "task_page.php&us_id=" . $_POST['us_id'] ) .
 			 $additional . "" );
 } else {
-	
+	// echo __LINE__;
 	# divide task action
 	if( isset($_POST['divide_task']) && ($_POST['divide_task'] == plugin_lang_get( 'button_assume' )) ) {
 		
@@ -138,12 +142,12 @@ if( isset($_POST['delete']) && $_POST['delete'] ) {
 					$system = plugin_lang_get( 'edit_task_error_985902' );
 				}
 				
-				if( $getSprint['status'] == 0 ) {
+				if( $getSprint['status'] == $sprintStatus['open'] ) {
 					$agilemantis_tasks->planned_capacity = str_replace( ',', '.', 
 						$_POST['planned_capacity'] );
 				}
 				
-				if( $getSprint['status'] == 1 && $_POST['planned_capacity'] > 0 ) {
+				if( $getSprint['status'] == $sprintStatus['running'] && $_POST['planned_capacity'] > 0 ) {
 					$agilemantis_tasks->planned_capacity = str_replace( ',', '.', 
 						$_POST['planned_capacity'] );
 				}
@@ -187,29 +191,29 @@ if( isset($_POST['delete']) && $_POST['delete'] ) {
 						plugin_config_get( 'gadiv_task_unit_mode' ) );
 				}
 				
-				if( $getSprint['status'] == 1 &&
+				if( $getSprint['status'] == $sprintStatus['running'] &&
 					 str_replace( ',', '.', $restCap ) !=
 					 str_replace( ',', '.', $_POST['old_rest_capacity'] ) &&
 					 str_replace( ',', '.', $_POST['rest_capacity'] ) > 0 ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
 				
-				if( $getSprint['status'] == 1 &&
+				if( $getSprint['status'] == $sprintStatus['running'] &&
 					 str_replace( ',', '.', $perfCapToday ) != 0 ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
 				
-				if( $getSprint['status'] == 1 &&
+				if( $getSprint['status'] == $sprintStatus['running'] &&
 					 str_replace( ',', '.', $perfCapToday ) != 0 ||
 					 $_POST['oldstatus'] == $_POST['status'] ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
 				
-				if( $getSprint['status'] == 1 && $agilemantis_tasks->id == 0 ) {
+				if( $getSprint['status'] == $sprintStatus['running'] && $agilemantis_tasks->id == 0 ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
 				
-				if( $getSprint['status'] == 1 && $_POST['oldstatus'] != $_POST['status'] ) {
+				if( $getSprint['status'] == $sprintStatus['running'] && $_POST['oldstatus'] != $_POST['status'] ) {
 					$agilemantis_tasks->daily_scrum = 1;
 				}
 				
@@ -277,7 +281,7 @@ if( isset($_POST['delete']) && $_POST['delete'] ) {
 						$_POST['planned_capacity'] );
 				}
 				
-				if( $getSprint['status'] == 0 ) {
+				if( $getSprint['status'] == $sprintStatus['open'] ) {
 					$agilemantis_tasks->rest_capacity = $agilemantis_tasks->planned_capacity;
 					if( $_POST['id'] > 0 ) {
 						$agilemantis_tasks->replacePlannedCapacity( $_POST['id'] );
@@ -651,6 +655,7 @@ if( isset($_POST['delete']) && $_POST['delete'] ) {
 	}
 }
 
+// echo __LINE__;
 # get task id
 if( $_POST['id'] ) {
 	$task_id = $_POST['id'];
@@ -683,6 +688,7 @@ if( $system ) {
 <?php
 }
 
+//echo '<br>' . __LINE__;
 # make task unit changes if sprint is not running
 if( $getSprint['status'] > 0 ) {
 	if( $getSprint['unit_planned_task'] > 0 ) {
@@ -781,7 +787,8 @@ if( $getSprint['status'] > 0 ) {
 		   <?php echo plugin_lang_get( 'edit_task_planned' )?> <?php echo $unit?>
 		</td>
 				<td>
-			<?php if($getSprint['status'] == 0){?>
+
+			<?php if($getSprint['status'] == $sprintStatus['open']){?>
 				<input style="width: 400px;" type="text" name="planned_capacity"
 					value="<?php echo $task['planned_capacity'] ?>">
 			<?php } else {?>
@@ -794,7 +801,7 @@ if( $getSprint['status'] > 0 ) {
 			<?php echo plugin_lang_get( 'edit_task_rest' )?> <?php echo $unit?>
 		</td>
 				<td>
-			<?php if($getSprint['status'] == 1){ ?>
+			<?php if($getSprint['status'] == $sprintStatus['running']){ ?>
 				<input style="width: 400px;" type="text" name="rest_capacity"
 					value="<?php echo $task['rest_capacity'] ?>">
 			<?php } ?>
@@ -805,7 +812,7 @@ if( $getSprint['status'] > 0 ) {
 			<?php echo plugin_lang_get( 'edit_task_performed' )?> <?php echo $unit?>
 		</td>
 				<td>
-			<?php if($getSprint['status'] == 1 && $task['status'] < 4 && $task['developer_id'] > 0){ ?>
+			<?php if($getSprint['status'] == $sprintStatus['running'] && $task['status'] < 4 && $task['developer_id'] > 0){ ?>
 				<input style="width: 400px;" type="text"
 					name="performed_capacity_today" value="">
 			<?php } ?>
@@ -826,7 +833,7 @@ if( $getSprint['status'] > 0 ) {
 			<input type="hidden" name="oldstatus"
 					value="<?php echo $task['status']?>"> <select name="status"
 					style="width: 400px;"
-					<?php if($getSprint['status'] == 0 || $task['id'] == 0){?> disabled
+					<?php if($getSprint['status'] == $sprintStatus['open'] || $task['id'] == 0){?> disabled
 					<?php }?>>
 				<?php if($task['status'] != 0){?>
 					<option value="<?php echo $task['status']?>" selected><?php echo $oldStatus ?></option>
@@ -855,16 +862,16 @@ if( $getSprint['status'] > 0 ) {
 			<tr>
 				<td class="center" colspan="2"><input type="submit" name="submit"
 					value="<?php echo plugin_lang_get( 'button_save' )?>">
-			<?php if( ( $getSprint['status'] == 0 || ($task['developer_id'] == 0 
+			<?php if( ( $getSprint['status'] == $sprintStatus['open'] || ($task['developer_id'] == 0 
 					&& $task['planned_capacity'] == '0.00')) && $task['id'] > 0 
 					&& $task['status'] == 1 ) { ?>
 				<input type="submit" name="delete" value="<?php echo 'Löschen' ?>">
-			<?php } elseif( $getSprint['status'] == 1 && $task['status'] < 4 ) { ?>
+			<?php } elseif( $getSprint['status'] == $sprintStatus['running'] && $task['status'] < 4 ) { ?>
 				<input type="submit" name="resolved"
 					value="<?php echo plugin_lang_get( 'button_resolve' )?>">
 			<?php }?>
 			<?php if( $task['id'] > 0 && $task['status'] < 4 && $task['performed_capacity'] > 0 
-					  && $getSprint['status'] == 1 ) { ?>
+					  && $getSprint['status'] == $sprintStatus['running'] ) { ?>
 				<input type="submit" name="divide_task"
 					value="<?php echo plugin_lang_get( 'button_assume' )?>">
 			<?php }?>
