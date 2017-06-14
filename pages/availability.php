@@ -306,6 +306,10 @@ if( $_POST['back_button'] ) {
 				if( $current_day >= $today_date && $system == "" ) {
 					if( $agilemantis_av->getCapacityToSavedAvailability( $user_id, $key ) > $value ) {
 						$hinweis = plugin_lang_get( 'manage_availability_error_108300' );
+						if( !isset($count_over_capacity[$user_id]) )
+						{
+							$count_over_capacity[$user_id] = 0;	
+						}	
 						$count_over_capacity[$user_id]++;
 						$_POST['staycal'] = 1;
 					}
