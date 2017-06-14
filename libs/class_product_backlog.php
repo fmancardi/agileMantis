@@ -275,7 +275,8 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		if( !$bug_list || sizeof( $bug_list ) == 0 ) {
 			return array();
 		}
-		
+
+		$user_stories = null;
 		foreach( $bug_list as $row ) {
 			$sprint = $this->getCustomFieldValueById( $row['id'], $this->spr );
 			if( !empty( $sprint ) ) {
@@ -576,9 +577,16 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		$this->AddInReleaseDocu( $bug_id, $t_in_release_doku, $story['inReleaseDocu'] );
 		
 		if( $bug[0]['status'] < 80 ) {
-			$this->doUserStoryToSprint( $bug_id, $_POST['sprint'], $story['sprint'] );
+			if( isset($_POST['sprint']) && isset( $story['sprint']) )
+			{
+				$this->doUserStoryToSprint( $bug_id, $_POST['sprint'], $story['sprint'] );
+			}	
 		}
 		
+		if( !isset($_POST['plannedWork']) )
+		{
+			$_POST['plannedWork'] = 0;
+		}	
 		$_POST['plannedWork'] = str_replace( ',', '.', $_POST['plannedWork'] );
 		if( is_numeric( $_POST['plannedWork'] ) || empty( $_POST['plannedWork'] ) ) {
 			

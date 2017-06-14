@@ -1014,9 +1014,11 @@ class gadiv_commonlib {
 		$_SESSION['tracker_handler'] = $result[0]['id'];
 		$_SESSION['tracker_id'] = $bug_id;
 		$_SESSION['backlog'] = $_POST['backlog'];
-		$_SESSION['old_product_backlog'] = $_POST['old_product_backlog'];
+		$_SESSION['old_product_backlog'] = isset($_POST['old_product_backlog']) ?
+		                                   $_POST['old_product_backlog'] : 0;
 		
-		if( $_POST['backlog'] != $_POST['old_product_backlog'] ) {
+		if(isset($_POST['old_product_backlog']) &&  
+			$_POST['backlog'] != $_POST['old_product_backlog'] ) {
 			$this->updateTrackerHandler( $bug_id, $result[0]['id'], 
 				$this->get_product_backlog_id( $_POST['old_product_backlog'] ) );
 		}

@@ -26,6 +26,7 @@
 
 
 layout_page_header( plugin_lang_get( 'assume_userstories_title' ) );
+layout_page_begin();
 
 # merge global $_GET / $_POST array
 $request = array_merge( $_POST, $_GET );
@@ -48,7 +49,7 @@ if( $agilemantis_sprint->getUnitId( plugin_config_get( 'gadiv_task_unit_mode' ) 
 	$different_units = true;
 }
 
-if( $request['action'] == 'save' ) {
+if( isset($request['action']) && $request['action'] == 'save' ) {
 	if( !empty( $request['assume'] ) ) {
 		foreach( $request['assume'] as $num => $row ) {
 			$tasked = $agilemantis_sprint->getSprintTasks( $row, 0 );
@@ -129,11 +130,13 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 	<input type="hidden" name="fromPage" 
 		value="<?php echo $fromPage?>"> 
 	<input type="hidden" name="fromDailyScrum"
-		value="<?php echo $_POST['fromDailyScrum']?>"> 
+		value="<?php echo isset($_POST['fromDailyScrum']) ? $_POST['fromDailyScrum'] : ''?>"> 
 	<input type="hidden"
-		name="fromStatistics" value="<?php echo $_POST['fromStatistics']?>">
+		name="fromStatistics" 
+		value="<?php echo 
+		isset($_POST['fromStatistics']) ? $_POST['fromStatistics'] : '' ?>">
 	<div class="table-container">
-		<table align="center" class="width100" cellspacing="1">
+		<table class="table table-bordered table-condensed table-hover table-striped">
 			<tr>
 				<td colspan="10">
 					<div style="float: left">
@@ -262,6 +265,8 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 				<?php echo $row['projectname']?> <?php echo $row['version']?>
 			</td>
 				<td><input type="checkbox" name="assume[]"
+				     class="assume"
+				    data-row-id="<?php echo $row['id']?>"
 					id="bug_id_<?php echo $row['id']?>" value="<?php echo $row['id']?>"
 					onclick="setCookie(<?php echo $row['id']?>,getCookie())"> <input
 					type="hidden" name="storypoints[<?php echo $row['id']?>]"
@@ -271,30 +276,6 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 					<a href="view.php?id=<?php echo $row['id']?>">
 						<?php echo $row['id']?>
 					</a>
-				</td>
-				<td width="20">		
-					<?php
-			if( !plugin_is_loaded( 'agileMantisExpert' ) ) {
-				?>
-				<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png"
-					alt="<?php echo plugin_lang_get( 'product_backlog_show_info' );?>"
-					onclick="loadUserstoryNoExpert(<?php 
-						echo $row['id']?>, '<?php echo AGILEMANTIS_PLUGIN_URL ?>');"
-					height="16" width="16">
-					<?php
-			} else {
-				?>
-				<a href="<?php echo AGILEMANTIS_EXPERT_PLUGIN_URL; ?>
-					pages/file_download.php?webstart_file=
-					userstory_<?php echo auth_get_current_user_id()?>
-					_<?php echo $row['id']?>.jnlp"> 
-					<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png"
-						alt="<?php echo plugin_lang_get( 'product_backlog_show_info' );?>"
-						height="16" width="16">
-				</a>
-			<?php
-				}
-			?>
 				</td>
 				<td>
 				<?php echo string_display_line_links($row['summary'])?>
@@ -327,10 +308,11 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 				<td style="background-color: #B1DDFF"></td>
 			</tr>
 			<tr>
-				<td colspan="<?php echo $additional_fields?>" class="center"><input
-					type="submit" name="assume_userstories"
+				<td colspan="<?php echo $additional_fields?>" class="center">
+				    <input type="submit" name="assume_userstories"
+				           id="assume_userstories" 
 					value="<?php echo plugin_lang_get( 'assume_userstories_assume_to_sprint' )?>"
-					onclick="deleteCookie();">
+					>
 					</form>
 					<form action="<?php echo plugin_page($fromPage)?>
 						&sprintName=<?php
@@ -347,3 +329,7 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 <?php
 	layout_page_end()
 ?>
+<?php 
+echo '<script src="' . AGILEMANTIS_PLUGIN_URL . 'js/assume_userstories.js"></script>';
+?>
+

@@ -47,34 +47,6 @@ $style = '';
 						#<?php echo $row['id']?>
 				</a>
 			</td>
-			<td width="20">
-				<?php
-				if( !plugin_is_loaded( 
-					'agileMantisExpert' ) ) { ?>
-					<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>
-							images/info-icon.png"
-						alt="<?php echo plugin_lang_get( 
-							'product_backlog_show_info' );?>"
-						onclick="loadUserstoryNoExpert(
-							<?php echo $row['id']?>,
-							"<?php echo AGILEMANTIS_PLUGIN_URL ?>');"
-						height="16" width="16">
-				<?php
-				} else {
-				?>
-					<a type="application/x-java-jnlp-file"
-						href="<?php echo AGILEMANTIS_EXPERT_PLUGIN_URL; ?>
-						pages/file_download.php?webstart_file=
-						userstory_<?php echo auth_get_current_user_id()?>
-						_<?php echo $row['id']?>.jnlp"> 
-						<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png"
-						alt="<?php echo plugin_lang_get( 'product_backlog_show_info' );?>"
-						height="16" width="16">
-					</a>
-				<?php
-				}
-				?>
-			</td>
 			<td colspan="6">
 				<div style="float: left;">
 					<?php echo string_display_line_links( $row['summary'] )?>
