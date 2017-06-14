@@ -433,7 +433,8 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		
 		$this->getAdditionalProjectFields();
 		$orderby = '';
-		
+		$user_stories = null;
+
 		$t_sql = "SELECT
 				a.id AS id, a.project_id AS project_id, a.summary AS summary, a.status AS status,
 				a.target_version AS target_version, b.id AS b_category_id, b.name AS category_name,

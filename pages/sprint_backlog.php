@@ -25,9 +25,14 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
-
 # include additional sprint functionality
 require (AGILEMANTIS_PLUGIN_URI . 'pages/sprint_backlog_functions.php');
+
+$kj = array('delete','task_id','us_id','submit_performed','resolved');
+foreach($kj as $yy)
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : '';
+}	
 
 # delete a task
 if( $_POST['delete'] ) {
@@ -121,6 +126,9 @@ if( ($_POST['submit_performed'] != "" || $_POST['resolved'] == plugin_lang_get( 
 }
 	# show chose sprint page or open chosen sprint directly
 	if( $show_all_sprints == true ) {
+		layout_page_header(); 
+		layout_page_begin();
+
 		include(AGILEMANTIS_PLUGIN_URI.'pages/chose_sprint.php');
 	} else {
 		include(AGILEMANTIS_PLUGIN_URI.'pages/sprint_backlog_header.php');
@@ -151,7 +159,7 @@ if( $no_sprints == false ) {?>
 	$tableColums += config_get( 'show_project_target_version' );
 	?>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="<?php echo $tableColums?>">
 				<div style="float: left;">
@@ -230,6 +238,7 @@ if( $no_sprints == false ) {?>
 		</tr>
 		<?php
 			# show each user story which is in a specific sprint in a table
+		$t_buglist = '';
 		if( !empty( $us ) ) {
 			foreach( $us AS $num => $row ) {
 				$t_buglist .= $row['id'] . ',';
@@ -257,7 +266,6 @@ if( $no_sprints == false ) {?>
 						$uscolor = '#c9ccc4';
 						break;
 				}
-
 				if( config_get( 'show_only_own_userstories', null, auth_get_current_user_id() ) == 1 &&
 					 $agilemantis_sprint->isUserTask( $row['id'], auth_get_current_user_id() ) ) {
 					include (AGILEMANTIS_PLUGIN_URI . 'pages/sprint_backlog_task_row.php');
@@ -275,7 +283,7 @@ if( $no_sprints == false ) {?>
 	</table>
 </div>
 <br>
-<?php html_status_legend();?>
+<?php // html_status_legend();?>
 	<?php layout_page_end() ?>
 <?php } else {?>
 <br>

@@ -51,76 +51,84 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 <div class="table-container">
 	<table align="center" class="width100" cellspacing="1">
 		<tr>
-			<td colspan="4"><b>User Stories</b> <input type="button"
-				name="submit" value="<?php echo plugin_lang_get( 'button_save' )?>"
-				onclick="document.getElementById('fileform').submit();"></td>
+			<form action="" method="post" id="filterform" name="filterform" style="float: right;">
+			<td colspan="4"><b>User Stories</b> 
+			    <input type="submit" value="<?php echo plugin_lang_get( 'button_save' )?>"></td>
+			
 			<td colspan="<?php echo $columns?>">
-				<form action="" method="post" name="filterform" style="float: right;">
 					<input type="hidden" name="action"
 						value="save_product_backlog_filter"> 
 					<input type="hidden" name="productBacklogName" 
 						value="<?php echo $product_backlog?>"> <input
 						type="checkbox" name="show_only_us_without_storypoints"
+						id="show_only_us_without_storypoints"
 					<?php
+
 						if( config_get( 'show_only_us_without_storypoints', 0, 
 							auth_get_current_user_id() ) == 1 ) {
 						?>
 						checked 
 					<?php } ?> 
-						value="1" onClick="this.form.submit();"> 
+						value="1" > 
 						<?php echo plugin_lang_get( 'product_backlog_without_sp' )?>&nbsp;
 					<input type="checkbox" name="show_resolved_userstories" 
+					       id="show_resolved_userstories"
 							value="1"
 						<?php
 						if( config_get( 'show_resolved_userstories', null, 
 							auth_get_current_user_id() ) == 1 ) {
 						?>
 						checked 
-						<?php } ?> onClick="this.form.submit();"> 
+						<?php } ?> > 
 						<?php echo plugin_lang_get( 'product_backlog_show_resolved' )?>&nbsp;
-					<input type="checkbox" name="show_closed_userstories" value="1"
+					<input type="checkbox" name="show_closed_userstories" 
+					       id="show_closed_userstories"
+					       value="1"
 						<?php
 						if( config_get( 'show_closed_userstories', null, 
 							auth_get_current_user_id() ) == 1 ) {
 						?>
 						checked 
-						<?php } ?> 
-						onClick="this.form.submit();"> 
+						<?php } ?> > 
 						<?php echo plugin_lang_get( 'product_backlog_show_closed' )?>&nbsp;
-					<input type="checkbox" name="show_only_userstories_without_sprint"
+					<input type="checkbox" 
+					       name="show_only_userstories_without_sprint"
+					       id="show_only_userstories_without_sprint"
 						<?php
 						if( config_get( 'show_only_userstories_without_sprint', null, 
 							auth_get_current_user_id() ) == 1 ) {
 						?>
 						checked 
 						<?php } ?> 
-						value="1" onClick="this.form.submit();"> 
+						value="1" > 
 						<?php echo plugin_lang_get( 'product_backlog_without_sprint' )?>&nbsp;
 					<input type="checkbox" name="show_only_project_userstories"
+					       id="show_only_project_userstories"
 						value="1"
 						<?php
 						if( config_get( 'show_only_project_userstories', null, 
 							auth_get_current_user_id() ) == 1 ) {
 						?>
 						checked 
-						<?php } ?> 
-						onClick="this.form.submit();"> 
+						<?php } ?> > 
 						<?php echo plugin_lang_get( 'product_backlog_current_project' )?>&nbsp;
-					<input type="checkbox" name="show_project_target_version" value="1"
+					<input type="checkbox" name="show_project_target_version" 
+					       id="show_project_target_version"
+					       value="1"
 						<?php
 						if( config_get( 'show_project_target_version', null, 
 							auth_get_current_user_id() ) == 1 ) {
 						?>
 						checked 
 						<?php } ?> 
-						onClick="this.form.submit();"> 
+						> 
 						<?php echo plugin_lang_get( 'product_backlog_show_project_version' )?>&nbsp;
 				</form>
 			</td>
 		</tr>
 		<tr><td>&nbsp;</td></tr>
 		<tr>
-			<form action="<?php echo plugin_page("product_backlog.php")?>" id="fileform" method="post">
+		<form action="<?php echo plugin_page("product_backlog.php")?>" id="fileform" method="post">
 				<input type="hidden" name="action" value="save_values"> 
 				<input type="hidden" name="productBacklogName"
 					value="<?php echo $product_backlog?>">
@@ -278,7 +286,7 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 				if( !plugin_is_loaded( 'agileMantisExpert' ) ) {
 			?>
 				<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png"
-				alt="<?php echo plugin_lang_get( 'product_backlog_show_info' );?>"
+				title="<?php echo plugin_lang_get( 'product_backlog_show_info' );?>"
 				onclick="loadUserstoryNoExpert(<?php echo $row['id']?>,
 				'<?php echo AGILEMANTIS_PLUGIN_URL ?>');"
 				height="16" width="16">
@@ -337,8 +345,14 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 	</table>
 </div>
 <br>
+<!--
 <center>
 	<input type="button" name="submit"
 		value="<?php echo plugin_lang_get( 'button_save' )?>"
 		onclick="document.getElementById('fileform').submit();">
 </center>
+-->
+<?php 
+echo '<script src="' . AGILEMANTIS_PLUGIN_URL . 'js/product_backlog_stories.js"></script>';
+?>
+
