@@ -285,10 +285,12 @@ if( plugin_is_loaded( 'agileMantisExpert' ) ) {
 			<?php
 				if( !plugin_is_loaded( 'agileMantisExpert' ) ) {
 			?>
-				<img src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png"
-				title="<?php echo plugin_lang_get( 'product_backlog_show_info' );?>"
-				onclick="loadUserstoryNoExpert(<?php echo $row['id']?>,
-				'<?php echo AGILEMANTIS_PLUGIN_URL ?>');"
+				<img id="product_backlog_show_info"
+				     data-row-id="<?php echo $row['id']?>"
+				     data-url-plugin="<?php echo AGILEMANTIS_PLUGIN_URL ?>"
+				  src="<?php echo AGILEMANTIS_PLUGIN_URL?>images/info-icon.png"
+				  title="<?php echo plugin_lang_get( 'product_backlog_show_info' );?>"
+				
 				height="16" width="16">
 			<?php } else { ?>
 				<a type="application/x-java-jnlp-file"

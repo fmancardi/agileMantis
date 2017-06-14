@@ -476,7 +476,7 @@ class gadiv_commonlib {
 	# add new task
 	function newTask() {
 		
-		if( $_POST['user'] ) {
+		if( isset($_POST['user']) && $_POST['user'] ) {
 			$this->user_id = $_POST['user'];
 		} else {
 			$this->user_id = auth_get_current_user_id();

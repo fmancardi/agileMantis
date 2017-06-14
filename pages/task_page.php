@@ -91,7 +91,13 @@ if( $_GET['us_id'] > 0 ) {
 	
 	# add new task
 	if( isset($_POST['action']) && $_POST['action'] == 'addTask' &&
-	    isset($_POST['uniqformid']) && $_SESSION['uniqformid'] != $_POST['uniqformid'] ) {
+	    isset($_POST['uniqformid']) && 
+	      (
+	        (isset($_SESSION['uniqformid']) && 
+	         $_SESSION['uniqformid'] != $_POST['uniqformid']) ||
+	          !isset($_SESSION['uniqformid'])  
+          )
+	   ) {
 		
 		$_SESSION['uniqformid'] = $_POST['uniqformid'];
 		if( $_POST['name'] == "" ) {
