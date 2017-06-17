@@ -69,16 +69,18 @@ class gadiv_calendar extends gadiv_commonlib {
 			echo "<div class=\"headline_days\">" . $value . "</div>\n";
 		}
 		
+		$user = array();
+
 		# collect all availabilities and capacities from one user
 		if( $team > 0 ) {
 			
 			$date_start = $year . '-' . $month . '-' . date( 'd', $start );
 			$date_end = $year . '-' . $month . '-' . date( 'd', $end );
-			$user1 = $agilemantis_av->getUserCapacityByTeam( $team, $user_id, $date_start, 
+			$userTeam = $agilemantis_av->getUserCapacityByTeam( $team, $user_id, $date_start, 
 				$date_end );
 			
-			if( !empty( $user1 ) ) {
-				foreach( $user1 as $num => $row ) {
+			if( !empty( $userTeam ) ) {
+				foreach( $userTeam as $num => $row ) {
 					$convertedDate = substr($row['date'], 0, 10);
 					$user[$row['user_id']][$convertedDate] = $row['capacity'];
 				}
@@ -95,19 +97,24 @@ class gadiv_calendar extends gadiv_commonlib {
 					$startdayyear = $current_year;
 				}
 				
-				if( $start > mktime() ) {
+				if( $start > time() ) {
 					$date_start = $year . '-' . $month . '-' . date( 'd', $start );
 				} else {
 					$date_start = $year . '-' . $month . '-' . date( 'd' );
 				}
 				$date_end = $year . '-' . $month . '-' . date( 'd', $end );
 				
-				$user2 = $agilemantis_av->getPredaysCapacity( $user_id, $date_start, $date_end );
-			    
-				if( !empty( $user2 ) ) {
-					foreach( $user2 as $num => $row ) {
-						if( $user[$row['user_id']][$row['date']] == "" ||
-							 $user[$row['user_id']][$row['date']] == 0 ) {
+				$predaysCap = $agilemantis_av->getPredaysCapacity( $user_id, $date_start, $date_end );
+
+				if( !empty( $predaysCap ) ) {
+
+					foreach( $predaysCap as $num => $row ) {
+
+						$doIt = isset($user[$row['user_id']]) && 
+						        isset($user[$row['user_id']][$row['date']]);
+						if( $doIt &&
+							($user[$row['user_id']][$row['date']] == "" ||
+							$user[$row['user_id']][$row['date']] == 0) ) {
 							
 							$row['capacity'] = $row['capacity'] - $agilemantis_av->getCapacityToSavedAvailability( 
 								$row['user_id'], $row['date'] );
