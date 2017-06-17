@@ -82,6 +82,7 @@ $style = '';
 						'pages/sprint_backlog_version.php');	
 				}
 			?>
+            <td>&nbsp;</td>
 			<td>
 				<form action="<?php echo plugin_page( "task_page.php" )?>
 					&us_id=<?php echo $row['id']?>" method="post">
