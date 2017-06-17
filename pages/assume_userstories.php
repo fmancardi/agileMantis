@@ -49,6 +49,7 @@ if( $agilemantis_sprint->getUnitId( plugin_config_get( 'gadiv_task_unit_mode' ) 
 	$different_units = true;
 }
 
+$resetPlannedCapacity = false;
 if( isset($request['action']) && $request['action'] == 'save' ) {
 	if( !empty( $request['assume'] ) ) {
 		foreach( $request['assume'] as $num => $row ) {

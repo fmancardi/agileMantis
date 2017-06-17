@@ -1080,7 +1080,8 @@ class gadiv_commonlib {
 		$t_sql = "SELECT count(*) AS userstories FROM gadiv_tasks WHERE us_id=" . db_param( 0 ) . " GROUP BY us_id";
 		$t_params = array( $id );
 		$story = $this->executeQuery( $t_sql, $t_params );
-		if( $story[0]['userstories'] > 0 ) {
+		if( isset($story[0]) && $story[0]['userstories'] && 
+			$story[0]['userstories'] > 0 ) {
 			return true;
 		} else {
 			return false;
@@ -1372,13 +1373,14 @@ class gadiv_commonlib {
 		if( empty( $user_stories ) || count($user_stories) == 0) {
 			return $user_stories;
 		}
-		
+
 		foreach( $user_stories as $key => $row ) {
 			$sort_id[$key] = $row['id'];
 			$sort_project_id[$key] = $row['project_id'];
 			$sort_summary[$key] = $row['summary'];
 			$sort_status[$key] = $row['status'];
-			$sort_target_version[$key] = $row['target_version'];
+			$sort_target_version[$key] = isset($row['target_version']) ? 
+			                             $row['target_version'] : $row['version'];
 			$sort_b_category_id[$key] = isset($row['b_category_id']) ? 
 			                            $row['b_category_id'] : 0;
 

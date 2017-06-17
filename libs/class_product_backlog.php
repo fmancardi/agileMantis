@@ -260,7 +260,7 @@ class gadiv_productBacklog extends gadiv_commonlib {
 		$t_params = array( $this->pb, $product_backlog );
 		
 		$t_sql = "SELECT
-				a.id AS id, a.summary AS summary, a.status AS status, a.target_version AS version,
+				a.id AS id, a.summary AS summary, a.status AS status, a.target_version AS version, a.project_id,
 				b.value AS productBacklog, c.name AS projectname
 				FROM $t_mantis_bug_table AS a
 				LEFT JOIN $t_mantis_custom_field_string_table AS b ON a.id = b.bug_id
