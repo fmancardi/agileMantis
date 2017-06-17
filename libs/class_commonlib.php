@@ -1216,7 +1216,8 @@ class gadiv_commonlib {
 				GROUP BY us_id";
 		$t_params = array( $us_id, $developer_id );
 		$user = $this->executeQuery( $t_sql, $t_params );
-		if( $user[0]['tasks'] >= 1 ) {
+		if( isset($user[0]) && isset($user[0]['tasks']) && 
+			$user[0]['tasks'] >= 1 ) {
 			return true;
 		}
 		return false;

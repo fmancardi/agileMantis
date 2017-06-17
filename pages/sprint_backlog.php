@@ -165,31 +165,32 @@ if( $no_sprints == false ) {?>
 				<div style="float: left;">
 					<b>User Stories & Tasks</b>
 				</div>
-				<form action="<?php echo plugin_page("sprint_backlog.php")?>"
+				<form id="sprint_backlog_form" name="sprint_backlog_form" 
+				      action="<?php echo plugin_page("sprint_backlog.php")?>"
 					method="post" style="float: right; margin: 0; padding: 0;">
 					<input type="hidden" name="id" value="<?php echo $s['id']?>"> <input
 						type="hidden" name="sprintName" value="<?php echo string_display( $s['name'] )?>"> <input
 						type="hidden" name="action" value="save_sprint_options"> <input
-						type="checkbox" name="show_project_target_version"
+						type="checkbox" id="show_project_target_version" name="show_project_target_version"
 						<?php if( config_get( 'show_project_target_version',
 										null, auth_get_current_user_id() ) == 1 ) { ?>
 						checked <?php 
 								}?> value="1"
-						onClick="this.form.submit();"> <?php 
+						> <?php 
 								echo plugin_lang_get( 'sprint_backlog_project' )?>
-					<input type="checkbox" name="show_only_open_userstories"
+					<input type="checkbox" id="show_only_open_userstories" name="show_only_open_userstories"
 						<?php if( config_get('show_only_open_userstories',
 										null, auth_get_current_user_id() ) == 1 ) {?>
 						checked <?php 
 								}?> value="1"
-						onClick="this.form.submit();"> <?php 
+						> <?php 
 								echo plugin_lang_get( 'sprint_backlog_only_undone' )?>
-					<input type="checkbox" name="show_only_own_userstories"
+					<input type="checkbox" id="show_only_own_userstories" name="show_only_own_userstories"
 						<?php if( config_get( 'show_only_own_userstories',
 										null, auth_get_current_user_id() ) == 1 ) {?>
 						checked <?php 
 								}?> value="1"
-						onClick="this.form.submit();"> <?php 
+						> <?php 
 								echo plugin_lang_get( 'sprint_backlog_only_own' )?>
 				</form>
 			</td>
@@ -291,4 +292,7 @@ if( $no_sprints == false ) {?>
 	<span style="color: red; font-size: 16px; font-weight: bold;"><?php echo $system?></span>
 </center>
 <?php }}
+?>
+<?php 
+echo '<script src="' . AGILEMANTIS_PLUGIN_URL . 'js/sprint_backlog.js"></script>';
 ?>

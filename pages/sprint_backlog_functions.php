@@ -46,6 +46,22 @@ if( $_SESSION['AGILEMANTIS_ISMANTISADMIN'] && $teams > 0 && $teams != 1 ) {
 if( $_SESSION['AGILEMANTIS_ISMANTISADMIN'] && $teams == 0 ) {
 	$show_all_sprints = true;
 }
+
+$kj = array('chose_sprint','submit','do_not_enter_sprint','sprintName',
+	        'revoke_userstory','us_id','confirmSprint','close_sprint',
+	        'action','divide_task');
+foreach($kj as $yy)
+{
+	$_POST[$yy] = isset($_POST[$yy]) ? $_POST[$yy] : null;
+}
+
+$kj = array('chose_sprint','submit','do_not_enter_sprint','sprintName');
+foreach($kj as $yy)
+{
+	$_GET[$yy] = isset($_GET[$yy]) ? $_GET[$yy] : null;
+}
+
+
 if( $_POST['chose_sprint'] && $_POST['submit'] != "backlog" ) {
 	$show_all_sprints = true;
 }
@@ -272,12 +288,18 @@ if( !empty( $_GET['sort_by'] ) && isset( $_GET['sort_by'] ) ) {
 
 # set / update checkbox values 
 if( $_POST['action'] == 'save_sprint_options' ) {
-	config_set( 'show_project_target_version', $_POST['show_project_target_version'], 
-		auth_get_current_user_id() );
-	config_set( 'show_only_own_userstories', $_POST['show_only_own_userstories'], 
-		auth_get_current_user_id() );
-	config_set( 'show_only_open_userstories', $_POST['show_only_open_userstories'], 
-		auth_get_current_user_id() );
+
+    $k2l = array('show_project_target_version' => false,
+    	         'show_only_own_userstories' => false,
+    	         'show_only_open_userstories' => false);
+
+    $user_id = auth_get_current_user_id();
+    foreach($k2l as $kk => $vv)
+    {
+    	$df = isset($_POST[$kk]) ? $_POST[$kk] : $vv; 
+	    config_set( $kk, $df, $user_id);
+    }	
+
 }
 
 # divide task action
