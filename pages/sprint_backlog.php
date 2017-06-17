@@ -28,6 +28,7 @@
 # include additional sprint functionality
 require (AGILEMANTIS_PLUGIN_URI . 'pages/sprint_backlog_functions.php');
 
+$system = '';
 $kj = array('delete','task_id','us_id','submit_performed','resolved');
 foreach($kj as $yy)
 {
@@ -85,7 +86,8 @@ if( ($_POST['submit_performed'] != "" || $_POST['resolved'] == plugin_lang_get( 
 	
 	# check wether developer has enough capacity or not
 	if( $agilemantis_tasks->developer > 0 && $agilemantis_tasks->status < 4 &&
-		 !$_POST['copy_tasks'] && ($_POST['currentUnit'] == "h" || $_POST['currentUnit'] == 'T') ) {
+		 isset($_POST['copy_tasks']) && !$_POST['copy_tasks'] && 
+		 (isset($_POST['currentUnit']) && $_POST['currentUnit'] == "h" || $_POST['currentUnit'] == 'T') ) {
 		if( !$agilemantis_tasks->getDeveloperSprintCapacity( $_POST['currentUnit'] ) ) {
 			$hinweis = plugin_lang_get( 'sprint_backlog_error_108701' );
 		}

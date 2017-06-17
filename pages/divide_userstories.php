@@ -155,7 +155,7 @@ function copyUserStory( $us_id, $status, $sprintname ) {
 }
 
 # divide user story action
-if( $request['action'] == 'edit' ) {
+if( isset($request['action']) && $request['action'] == 'edit' ) {
 	if( $request['divide_userstory'] ) {
 		if( $request['status'] < 80 ) {
 			copyUserStory( $request['us_id'], $request['userstory_status'], 
@@ -199,7 +199,8 @@ if( $request['action'] == 'edit' ) {
 		name="status" value="<?php echo $request['status']?>"> <input
 		type="hidden" name="fromPage"
 		value="<?php echo $request['fromPage']?>"> <input type="hidden"
-		name="fromDailyScrum" value="<?php echo $_POST['fromDailyScrum']?>">
+		name="fromDailyScrum" 
+		value="<?php echo isset($_POST['fromDailyScrum']) ? $_POST['fromDailyScrum']:''?>">
 	<div class="table-container">
 		<table align="center" class="width75" cellspacing="1">
 			<tr>
