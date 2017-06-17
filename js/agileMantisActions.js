@@ -25,6 +25,7 @@ function acceptSprintConfirm( message, message2 ) {
 		value = '1';
 	}
     document.getElementById( "confirmSprint" ).value = value;
+    return answer;
 }
 
 // set new cookie

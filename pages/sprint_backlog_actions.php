@@ -25,6 +25,7 @@
 # along with agileMantis. If not, see <http://www.gnu.org/licenses/>.
 
 
+// $disable_button = '';
 
 # check wether sprint backlog or taskboard is called
 $_GET['page'] = str_replace( 'agileMantis/', '', $_GET['page'] );
@@ -39,7 +40,7 @@ if( $page_name == 'sprint_backlog' ) {
 }
 ?>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="7"><b><?php echo $header_title?></b>
 				<form action="<?php echo plugin_page("availability.php")?>"
@@ -135,7 +136,7 @@ if( $page_name == 'sprint_backlog' ) {
 </div>
 <br>
 <div class="table-container">
-	<table align="center" class="width100" cellspacing="1">
+	<table class="table table-bordered table-condensed table-hover table-striped">
 		<tr>
 			<td colspan="7"><b>Sprint</b>
 				<form action="<?php echo plugin_page("edit_sprint.php")?>"
@@ -174,16 +175,19 @@ if( $page_name == 'sprint_backlog' ) {
 					$commit_question_2 = plugin_lang_get( "sprint_backlog_commit_question2" );
 				}
 			?>
-			<form action="<?php echo plugin_page($_GET['page'])?>" 
+			<form id="confirmSprintForm" name="confirmSprintForm" 
+			      action="<?php echo plugin_page($_GET['page'])?>" 
 				  method="post">
 				<input type="hidden" name="id" value="<?php echo $s['id']?>" /> 
 				<input type="hidden" name="name" value="<?php echo $s['name']?>" /> 
 				<input type="hidden" name="sprintName" value="<?php echo $s['name']?>" /> 
 				<input type="hidden" name="confirmSprint" value="" id="confirmSprint" /> 
-				<input type="submit" name="confirm_sprint"
+				<input type="button" id="confirm_sprint_btn" 
+				       name="confirm_sprint_btn"
+				       data-q1="<?php echo $commit_question ?>"
+				       data-q2="<?php echo $commit_question_2 ?>"
 					   value="<?php echo plugin_lang_get( 'sprint_backlog_confirm_sprint' )?>"
-					   onClick="acceptSprintConfirm('<?php echo $commit_question ?>',
-					   								'<?php echo $commit_question_2 ?>');" 
+					   
 					   <?php echo $disabled?>
 					   <?php echo $disable?>
 					   <?php echo $disable_button?>
@@ -292,3 +296,7 @@ if( $page_name == 'sprint_backlog' ) {
 	<?php }?>
 </table>
 </div>
+
+<?php 
+echo '<script src="' . AGILEMANTIS_PLUGIN_URL . 'js/sprint_backlog_actions.js"></script>';
+?>
