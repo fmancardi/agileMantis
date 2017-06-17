@@ -1,3 +1,9 @@
+========================================================
+IMPORTANT NOTICE
+on fmancardi/agilemantis work on migration to Mantis 2.x
+is one on branch mantis.2.x 
+========================================================
+
 agileMantis
 ===========
 
