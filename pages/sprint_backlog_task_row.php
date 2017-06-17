@@ -34,7 +34,7 @@ $style = '';
 				<a href="bug_update_page.php?
 					bug_id=<?php echo $row['id']?>"	
 					height="16" width="16"> 
-						<img src="images/update.png"
+						<img src="<?php echo AGILEMANTIS_PLUGIN_URI;?>images/update.png"
 							alt="Detailinformation zur 
 								User Story bearbeiten" 
 							height="16"	width="16">
