@@ -109,9 +109,11 @@ class gadiv_tasks extends gadiv_commonlib {
 		}
 		
 		# Check if Sprint Rest Capacity + New Planned Capacity is larger than Developer Capacity
-		$doIt = isset($sprint[0]) && isset($sprint[0]['rest_capacity']); 
-		if( ($sprint[0]['rest_capacity'] + $this->rest_capacity) * $multiplier >
-			 $developer[0]['capacity'] ) {
+		$doIt = isset($sprint[0]) && isset($sprint[0]['rest_capacity']) && 
+                isset($developer[0]) && isset($developer[0]['capacity']);
+
+		if( $doIt && 
+			($sprint[0]['rest_capacity'] + $this->rest_capacity) * $multiplier > $developer[0]['capacity'] ) {
 			return false;
 		}
 		
